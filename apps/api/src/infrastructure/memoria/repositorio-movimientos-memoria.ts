@@ -1,7 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import {
   mesDeFecha,
-  rangoDelMes,
   type FiltrosMovimientos,
   type Movimiento,
   type MovimientoEntrada,
@@ -108,17 +107,6 @@ export class RepositorioMovimientosMemoria implements RepositorioMovimientos {
     return Promise.resolve(
       this.listaDe(uid).filter((movimiento) => movimiento.categoriaId === categoriaId).length,
     );
-  }
-
-  /** Usado por el resumen de ejemplo hasta el spec 07. */
-  listarTodos(uid: string): Promise<readonly Movimiento[]> {
-    return Promise.resolve([...this.listaDe(uid)]);
-  }
-
-  /** Atajo de prueba: movimientos de un mes completo. */
-  listarMes(uid: string, mes: string): Promise<readonly Movimiento[]> {
-    const { desde, hasta } = rangoDelMes(mes);
-    return this.listarPorRango(uid, desde, hasta);
   }
 
   private listaDe(uid: string): Movimiento[] {

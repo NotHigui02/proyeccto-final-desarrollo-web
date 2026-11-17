@@ -16,7 +16,6 @@ import { ObtenerResumenMes } from '../src/application/use-cases/obtener-resumen-
 import { RequerirUsuarioDemo } from '../src/infrastructure/auth/requerir-usuario-demo.js';
 import { cargarEntorno } from '../src/infrastructure/config/entorno.js';
 import { RepositorioCategoriasMemoria } from '../src/infrastructure/memoria/repositorio-categorias-memoria.js';
-import { RepositorioDatosEjemplo } from '../src/infrastructure/memoria/datos-ejemplo.js';
 import { RepositorioMovimientosMemoria } from '../src/infrastructure/memoria/repositorio-movimientos-memoria.js';
 import { LimitadorMemoria } from '../src/infrastructure/memoria/limitador-memoria.js';
 import { UID_DEMO } from '../src/infrastructure/memoria/semilla.js';
@@ -40,7 +39,7 @@ export function crearDependenciasPrueba(
     uid: UID_DEMO,
     requerirUsuario: opciones?.requerirUsuario ?? new RequerirUsuarioDemo(),
     obtenerEstadoSalud: new ObtenerEstadoSalud(reloj),
-    obtenerResumenMes: new ObtenerResumenMes(new RepositorioDatosEjemplo(categorias, movimientos)),
+    obtenerResumenMes: new ObtenerResumenMes(categorias, movimientos),
     listarCategorias: new ListarCategorias(categorias),
     crearCategoria: new CrearCategoria(categorias),
     actualizarCategoria: new ActualizarCategoria(categorias),

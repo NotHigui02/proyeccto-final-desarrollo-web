@@ -1,6 +1,6 @@
 # 07 · Resumen desde la API
 
-**Estado:** Pendiente · **Hito:** 3 · **Enunciado:** RF-02, RF-03, §9.4
+**Estado:** Hecho · **Hito:** 3 · **Enunciado:** RF-02, RF-03, §9.4
 
 ## Objetivo
 
@@ -15,9 +15,9 @@ gastosCentavos }] (últimos 6 meses), presupuesto? }`.
 
 ## Tareas
 
-- [ ] Caso de uso `ObtenerResumenMes` + pruebas con repositorio en memoria.
-- [ ] Ruta + pruebas (`400` mes inválido, `401`).
-- [ ] La web consume el endpoint real sin cambiar los componentes de gráfico.
+- [x] Caso de uso `ObtenerResumenMes` + pruebas con repositorio en memoria.
+- [x] Ruta + pruebas (`400` mes inválido, `401`).
+- [x] La web consume el endpoint real sin cambiar los componentes de gráfico.
 - [ ] Reto opcional (§12): comparar dos meses en el mismo gráfico de barras.
 
 ## Definición de terminado

@@ -12,7 +12,6 @@ import { ObtenerMovimiento } from './application/use-cases/obtener-movimiento.js
 import { ObtenerResumenMes } from './application/use-cases/obtener-resumen-mes.js';
 import { RequerirUsuarioDemo } from './infrastructure/auth/requerir-usuario-demo.js';
 import { RepositorioCategoriasMemoria } from './infrastructure/memoria/repositorio-categorias-memoria.js';
-import { RepositorioDatosEjemplo } from './infrastructure/memoria/datos-ejemplo.js';
 import { RepositorioMovimientosMemoria } from './infrastructure/memoria/repositorio-movimientos-memoria.js';
 import { LimitadorMemoria } from './infrastructure/memoria/limitador-memoria.js';
 import { UID_DEMO } from './infrastructure/memoria/semilla.js';
@@ -25,13 +24,12 @@ export function crearDependencias(): Dependencias {
   const reloj = new RelojSistema();
   const categorias = new RepositorioCategoriasMemoria();
   const movimientos = new RepositorioMovimientosMemoria();
-  const datos = new RepositorioDatosEjemplo(categorias, movimientos);
 
   return {
     uid: UID_DEMO,
     requerirUsuario: new RequerirUsuarioDemo(),
     obtenerEstadoSalud: new ObtenerEstadoSalud(reloj),
-    obtenerResumenMes: new ObtenerResumenMes(datos),
+    obtenerResumenMes: new ObtenerResumenMes(categorias, movimientos),
     listarCategorias: new ListarCategorias(categorias),
     crearCategoria: new CrearCategoria(categorias),
     actualizarCategoria: new ActualizarCategoria(categorias),

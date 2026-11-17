@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
-import { ErrorConflicto } from '../src/domain/errors/errores-dominio.js';
+import { ErrorConflicto, ErrorNoAutenticado } from '../src/domain/errors/errores-dominio.js';
 import { LimitadorMemoria } from '../src/infrastructure/memoria/limitador-memoria.js';
 import { validar } from '../src/infrastructure/http/validar.js';
 import { crearAppPrueba, WEB_ORIGIN } from './helpers.js';
@@ -52,6 +52,19 @@ describe('GET /api/resumen', () => {
     const cuerpo = respuesta.json<{ error: string; detalles: { campo: string }[] }>();
     expect(cuerpo.error).toBe('Datos inválidos');
     expect(cuerpo.detalles.map((detalle) => detalle.campo)).toEqual(['mes']);
+  });
+
+  it('responde 401 sin sesión', async () => {
+    const app = crearAppPrueba(undefined, {
+      requerirUsuario: {
+        ejecutar: () => Promise.reject(new ErrorNoAutenticado()),
+      },
+    });
+    const respuesta = await app.inject({
+      method: 'GET',
+      url: '/api/resumen?mes=2026-11',
+    });
+    expect(respuesta.statusCode).toBe(401);
   });
 });
 

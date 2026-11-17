@@ -74,6 +74,8 @@ export function construirApp(entorno: Entorno, dependencias: Dependencias): Fast
   });
   void app.register(rutasResumen, {
     prefix: '/api',
+    uid: dependencias.uid,
+    requerirUsuario: dependencias.requerirUsuario,
     obtenerResumenMes: dependencias.obtenerResumenMes,
   });
   void app.register(rutasCategorias, {

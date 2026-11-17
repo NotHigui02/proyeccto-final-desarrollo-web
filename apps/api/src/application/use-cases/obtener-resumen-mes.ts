@@ -1,27 +1,42 @@
-import { calcularResumen, mesAnterior, mesDeFecha, type Mes, type Resumen } from '@gastos/shared';
-import type { RepositorioDatos } from '../ports/repositorio-datos.js';
+import {
+  calcularResumen,
+  mesAnterior,
+  mesDeFecha,
+  rangoDelMes,
+  type Mes,
+  type Movimiento,
+  type Resumen,
+} from '@gastos/shared';
+import type { RepositorioCategorias } from '../ports/repositorio-categorias.js';
+import type { RepositorioMovimientos } from '../ports/repositorio-movimientos.js';
 
 const MESES_EVOLUCION = 6;
 
 export class ObtenerResumenMes {
-  constructor(private readonly datos: RepositorioDatos) {}
+  constructor(
+    private readonly categorias: RepositorioCategorias,
+    private readonly movimientos: RepositorioMovimientos,
+  ) {}
 
-  async ejecutar(mes: Mes): Promise<Resumen> {
-    const [categorias, movimientos] = await Promise.all([
-      this.datos.listarCategorias(),
-      this.datos.listarMovimientos(),
-    ]);
-
+  async ejecutar(uid: string, mes: Mes): Promise<Resumen> {
+    const categorias = await this.categorias.listar(uid);
+    const movimientos = await this.movimientosEnVentana(uid, mes);
     const delMes = movimientos.filter((movimiento) => mesDeFecha(movimiento.fecha) === mes);
     const evolucion = this.construirEvolucion(mes, movimientos);
-
     return calcularResumen(mes, delMes, categorias, evolucion);
   }
 
-  private construirEvolucion(
-    mes: Mes,
-    movimientos: readonly { fecha: string; tipo: string; montoCentavos: number }[],
-  ) {
+  private async movimientosEnVentana(uid: string, mes: Mes): Promise<readonly Movimiento[]> {
+    let desdeMes: Mes = mes;
+    for (let i = 1; i < MESES_EVOLUCION; i += 1) {
+      desdeMes = mesAnterior(desdeMes);
+    }
+    const { desde } = rangoDelMes(desdeMes);
+    const { hasta } = rangoDelMes(mes);
+    return this.movimientos.listarPorRango(uid, desde, hasta);
+  }
+
+  private construirEvolucion(mes: Mes, movimientos: readonly Movimiento[]) {
     const puntos = [];
     let actual: Mes = mes;
 
