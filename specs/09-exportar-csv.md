@@ -1,6 +1,6 @@
 # 09 · Exportar el mes a CSV
 
-**Estado:** Pendiente · **Hito:** 3 · **Enunciado:** RF-06, §9.4
+**Estado:** Hecho · **Hito:** 3 · **Enunciado:** RF-06, §9.4
 
 ## Objetivo
 
@@ -17,6 +17,6 @@ Descargar los movimientos del mes como CSV.
 
 ## Tareas
 
-- [ ] `generarCSV` + pruebas (escapes, fórmulas, mes vacío).
-- [ ] Ruta + pruebas (`200` con cabeceras, `400` mes inválido, `401`).
-- [ ] Botón accesible en la web.
+- [x] `generarCSV` + pruebas (escapes, fórmulas, mes vacío).
+- [x] Ruta + pruebas (`200` con cabeceras, `400` mes inválido, `401`).
+- [x] Botón accesible en la web.

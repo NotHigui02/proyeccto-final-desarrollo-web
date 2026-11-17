@@ -8,9 +8,10 @@ import { CrearCategoria } from '../src/application/use-cases/crear-categoria.js'
 import { CrearMovimiento } from '../src/application/use-cases/crear-movimiento.js';
 import { EliminarCategoria } from '../src/application/use-cases/eliminar-categoria.js';
 import { EliminarMovimiento } from '../src/application/use-cases/eliminar-movimiento.js';
+import { ExportarMovimientosMes } from '../src/application/use-cases/exportar-movimientos-mes.js';
+import { GuardarPresupuesto } from '../src/application/use-cases/guardar-presupuesto.js';
 import { ListarCategorias } from '../src/application/use-cases/listar-categorias.js';
 import { ListarMovimientos } from '../src/application/use-cases/listar-movimientos.js';
-import { GuardarPresupuesto } from '../src/application/use-cases/guardar-presupuesto.js';
 import { ObtenerEstadoSalud } from '../src/application/use-cases/obtener-estado-salud.js';
 import { ObtenerMovimiento } from '../src/application/use-cases/obtener-movimiento.js';
 import { ObtenerPresupuesto } from '../src/application/use-cases/obtener-presupuesto.js';
@@ -54,6 +55,7 @@ export function crearDependenciasPrueba(
     crearMovimiento: new CrearMovimiento(movimientos, categorias, reloj),
     actualizarMovimiento: new ActualizarMovimiento(movimientos, categorias, reloj),
     eliminarMovimiento: new EliminarMovimiento(movimientos),
+    exportarMovimientosMes: new ExportarMovimientosMes(categorias, movimientos),
     obtenerPresupuesto: new ObtenerPresupuesto(presupuestos),
     guardarPresupuesto: new GuardarPresupuesto(presupuestos),
     limitadorFrecuencia: limitador ?? new LimitadorMemoria(1000, 60_000),

@@ -8,11 +8,12 @@ import type { CrearCategoria } from './application/use-cases/crear-categoria.js'
 import type { CrearMovimiento } from './application/use-cases/crear-movimiento.js';
 import type { EliminarCategoria } from './application/use-cases/eliminar-categoria.js';
 import type { EliminarMovimiento } from './application/use-cases/eliminar-movimiento.js';
+import type { ExportarMovimientosMes } from './application/use-cases/exportar-movimientos-mes.js';
+import type { GuardarPresupuesto } from './application/use-cases/guardar-presupuesto.js';
 import type { ListarCategorias } from './application/use-cases/listar-categorias.js';
 import type { ListarMovimientos } from './application/use-cases/listar-movimientos.js';
 import type { ObtenerEstadoSalud } from './application/use-cases/obtener-estado-salud.js';
 import type { ObtenerMovimiento } from './application/use-cases/obtener-movimiento.js';
-import type { GuardarPresupuesto } from './application/use-cases/guardar-presupuesto.js';
 import type { ObtenerPresupuesto } from './application/use-cases/obtener-presupuesto.js';
 import type { ObtenerResumenMes } from './application/use-cases/obtener-resumen-mes.js';
 import type { Entorno } from './infrastructure/config/entorno.js';
@@ -38,6 +39,7 @@ export interface Dependencias {
   crearMovimiento: CrearMovimiento;
   actualizarMovimiento: ActualizarMovimiento;
   eliminarMovimiento: EliminarMovimiento;
+  exportarMovimientosMes: ExportarMovimientosMes;
   obtenerPresupuesto: ObtenerPresupuesto;
   guardarPresupuesto: GuardarPresupuesto;
   limitadorFrecuencia: LimitadorFrecuencia;
@@ -100,6 +102,7 @@ export function construirApp(entorno: Entorno, dependencias: Dependencias): Fast
     crearMovimiento: dependencias.crearMovimiento,
     actualizarMovimiento: dependencias.actualizarMovimiento,
     eliminarMovimiento: dependencias.eliminarMovimiento,
+    exportarMovimientosMes: dependencias.exportarMovimientosMes,
   });
   void app.register(rutasPresupuestos, {
     prefix: '/api',

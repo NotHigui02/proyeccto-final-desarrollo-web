@@ -5,6 +5,7 @@ import type { RequerirUsuario } from '../../../application/ports/requerir-usuari
 import type { ActualizarMovimiento } from '../../../application/use-cases/actualizar-movimiento.js';
 import type { CrearMovimiento } from '../../../application/use-cases/crear-movimiento.js';
 import type { EliminarMovimiento } from '../../../application/use-cases/eliminar-movimiento.js';
+import type { ExportarMovimientosMes } from '../../../application/use-cases/exportar-movimientos-mes.js';
 import type { ListarMovimientos } from '../../../application/use-cases/listar-movimientos.js';
 import type { ObtenerMovimiento } from '../../../application/use-cases/obtener-movimiento.js';
 import { validar } from '../validar.js';
@@ -17,6 +18,7 @@ interface OpcionesRutasMovimientos {
   crearMovimiento: CrearMovimiento;
   actualizarMovimiento: ActualizarMovimiento;
   eliminarMovimiento: EliminarMovimiento;
+  exportarMovimientosMes: ExportarMovimientosMes;
 }
 
 const paramsIdSchema = z.strictObject({
@@ -29,6 +31,10 @@ const consultaListaSchema = z.strictObject({
   categoriaId: z.string().min(1).optional(),
   limite: z.coerce.number().int().min(1).max(100).default(20),
   cursor: z.string().min(1).optional(),
+});
+
+const consultaExportarSchema = z.strictObject({
+  mes: mesSchema,
 });
 
 export const rutasMovimientos: FastifyPluginCallback<OpcionesRutasMovimientos> = (
@@ -48,6 +54,18 @@ export const rutasMovimientos: FastifyPluginCallback<OpcionesRutasMovimientos> =
       { mes, tipo, categoriaId },
       { limite, cursor },
     );
+  });
+
+  app.get('/movimientos/exportar', async (request, reply) => {
+    const { mes } = validar(consultaExportarSchema, request.query);
+    const { csv, nombreArchivo } = await opciones.exportarMovimientosMes.ejecutar(
+      opciones.uid,
+      mes,
+    );
+    return reply
+      .header('content-type', 'text/csv; charset=utf-8')
+      .header('content-disposition', `attachment; filename="${nombreArchivo}"`)
+      .send(csv);
   });
 
   app.get('/movimientos/:id', async (request) => {

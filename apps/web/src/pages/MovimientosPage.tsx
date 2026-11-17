@@ -9,6 +9,7 @@ import {
 } from '@gastos/shared';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { FormularioMovimiento } from '../components/forms/FormularioMovimiento';
+import { BotonExportarCsv } from '../components/ui/BotonExportarCsv';
 import { EstadoCarga } from '../components/ui/EstadoCarga';
 import { EstadoError } from '../components/ui/EstadoError';
 import { EstadoVacio } from '../components/ui/EstadoVacio';
@@ -150,6 +151,8 @@ export function MovimientosPage() {
       <p className={styles.aviso} aria-live="polite">
         {aviso ?? ''}
       </p>
+
+      <BotonExportarCsv mes={mes} />
 
       <section className={styles.filtros} aria-label="Filtros de movimientos">
         <SelectorMes />

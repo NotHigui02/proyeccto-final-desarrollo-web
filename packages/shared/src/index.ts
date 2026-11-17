@@ -1,4 +1,5 @@
 export * from './categoria.js';
+export * from './csv.js';
 export * from './dinero.js';
 export * from './fecha.js';
 export * from './mes.js';

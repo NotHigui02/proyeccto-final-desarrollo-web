@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { GraficoBarras } from '../components/charts/GraficoBarras';
 import { GraficoTorta } from '../components/charts/GraficoTorta';
+import { BotonExportarCsv } from '../components/ui/BotonExportarCsv';
 import { EstadoCarga } from '../components/ui/EstadoCarga';
 import { EstadoError } from '../components/ui/EstadoError';
 import { EstadoVacio } from '../components/ui/EstadoVacio';
@@ -23,6 +24,7 @@ export function InicioPage() {
       <title>Resumen del mes · Gastos con gráficos</title>
       <h1>Resumen del mes</h1>
       <SelectorMes />
+      <BotonExportarCsv mes={mes} />
 
       {estado.tipo === 'carga' ? <EstadoCarga mensaje="Cargando resumen…" /> : null}
       {estado.tipo === 'error' ? (

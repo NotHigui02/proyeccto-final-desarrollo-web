@@ -14,8 +14,8 @@ y se implementa en orden. Al terminar un spec: `npm run check`, actualizar su es
 | 05  | [Categorías](05-categorias.md)                                       | RF-01 (categorías), §8                    | 2–3  | Hecho     |
 | 06  | [Movimientos](06-movimientos.md)                                     | RF-01 (movimientos), §8, lista con cursor | 2–3  | Hecho     |
 | 07  | [Resumen desde la API](07-resumen-api.md)                            | `GET /api/resumen`, RF-02, RF-03          | 3    | Hecho     |
-| 08  | [Presupuesto mensual](08-presupuesto.md)                             | RF-04, CA-4                               | 2–3  | Pendiente |
-| 09  | [Exportar a CSV](09-exportar-csv.md)                                 | RF-06                                     | 3    | Pendiente |
+| 08  | [Presupuesto mensual](08-presupuesto.md)                             | RF-04, CA-4                               | 2–3  | Hecho     |
+| 09  | [Exportar a CSV](09-exportar-csv.md)                                 | RF-06                                     | 3    | Hecho     |
 | 10  | [Persistencia en Firestore](10-persistencia-firestore.md)            | §9.3, §9.4                                | 3    | Pendiente |
 | 11  | [Autenticación y sesión](11-autenticacion.md)                        | §9.1, roles, CSRF                         | 4    | Pendiente |
 | 12  | [Comprobantes con Vercel Blob](12-comprobantes-blob.md)              | §9.5                                      | 4    | Pendiente |
