@@ -1,0 +1,11 @@
+meta {
+  name: Exportar CSV (200)
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/movimientos/exportar?mes={{mes}}
+  body: none
+  auth: inherit
+}

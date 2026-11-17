@@ -1,0 +1,6 @@
+{
+  "version": "1",
+  "name": "Gastos con gráficos",
+  "type": "collection",
+  "ignore": ["node_modules", ".git"]
+}

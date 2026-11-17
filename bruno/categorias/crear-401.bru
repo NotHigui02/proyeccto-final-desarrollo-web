@@ -1,0 +1,23 @@
+meta {
+  name: Crear categoría (401)
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/categorias
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Origin: http://localhost:5173
+}
+
+body:json {
+  {
+    "nombre": "Sin sesión",
+    "color": "#0B5D4B"
+  }
+}

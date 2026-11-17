@@ -1,0 +1,26 @@
+meta {
+  name: Registrar comprobante (415)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/movimientos/{{movimientoId}}/comprobante
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Origin: http://localhost:5173
+}
+
+body:json {
+  {
+    "pathname": "usuarios/demo/comprobantes/malware.exe"
+  }
+}
+
+docs {
+  Extensión no permitida → 415. Ajusta movimientoId y el prefijo uid reales.
+}

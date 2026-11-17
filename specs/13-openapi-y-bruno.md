@@ -1,6 +1,6 @@
 # 13 · OpenAPI y colección Bruno
 
-**Estado:** Pendiente · **Hito:** 3 · **Enunciado:** §9.7
+**Estado:** Hecho · **Hito:** 3 · **Enunciado:** §9.7
 
 ## Objetivo
 
@@ -16,6 +16,6 @@ Documentar todas las rutas y entregar una colección de solicitudes para probarl
 
 ## Tareas
 
-- [ ] `openapi.yaml` completo.
-- [ ] Colección Bruno.
-- [ ] Prueba de sincronía rutas ↔ OpenAPI.
+- [x] `openapi.yaml` completo.
+- [x] Colección Bruno.
+- [x] Prueba de sincronía rutas ↔ OpenAPI.

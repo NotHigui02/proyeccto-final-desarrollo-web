@@ -1,0 +1,11 @@
+meta {
+  name: Obtener movimiento (404)
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/movimientos/no-existe
+  body: none
+  auth: inherit
+}
