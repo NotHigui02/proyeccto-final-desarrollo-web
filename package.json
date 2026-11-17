@@ -25,6 +25,7 @@
     "test": "npm run build:shared && npm run test --workspaces --if-present",
     "test:ia": "node --test \"ia/pruebas/*.test.mjs\"",
     "check": "npm run build:shared && npm run format:check && npm run lint && npm run typecheck && npm run test && npm run test:ia",
+    "audit:prod": "npm audit --audit-level=high --omit=dev",
     "prepare": "husky"
   },
   "lint-staged": {
@@ -49,5 +50,9 @@
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.43.0",
     "vitest": "^5.1.0"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "1.14.7",
+    "zod": "4.6.7"
   }
 }
