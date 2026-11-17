@@ -1,0 +1,23 @@
+# Copiar a la raíz como .cursorignore (Cursor no permite que el agente lo cree).
+# La IA no indexa ni lee estos archivos: segunda capa de defensa además de los hooks.
+.env
+.env.*
+!.env.example
+.envrc
+*.pem
+*.key
+*.p12
+*.pfx
+*service-account*.json
+*firebase-adminsdk*.json
+credentials*.json
+.npmrc
+.vercel/
+.firebase/
+
+# Ruido que no aporta contexto
+node_modules/
+dist/
+coverage/
+package-lock.json
+*.tsbuildinfo

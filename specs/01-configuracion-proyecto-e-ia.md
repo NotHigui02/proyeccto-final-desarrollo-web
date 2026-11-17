@@ -33,7 +33,7 @@ comprobable, versionada en el primer commit.
 - [x] Web React + Vite: layout accesible (landmarks, saltar al contenido, navegación), rutas de §3 y 404.
 - [x] ESLint, Prettier, EditorConfig, Husky, lint-staged, CI.
 - [x] Configuración de IA: reglas, hooks, permisos, pruebas y bitácora.
-- [ ] El usuario copia `ia/plantillas/cursorignore` a `.cursorignore` (Cursor no deja que el agente lo cree).
+- [x] El usuario copia `ia/plantillas/cursorignore` a `.cursorignore` (Cursor no deja que el agente lo cree).
 - [ ] Demostración en vivo de los hooks (ver `ia/README.md`).
 
 ## Pruebas
