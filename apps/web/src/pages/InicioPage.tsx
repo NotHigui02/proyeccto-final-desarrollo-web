@@ -4,6 +4,7 @@ import { GraficoTorta } from '../components/charts/GraficoTorta';
 import { EstadoCarga } from '../components/ui/EstadoCarga';
 import { EstadoError } from '../components/ui/EstadoError';
 import { EstadoVacio } from '../components/ui/EstadoVacio';
+import { PresupuestoMes } from '../components/ui/PresupuestoMes';
 import { SelectorMes } from '../components/ui/SelectorMes';
 import { TotalesMes } from '../components/ui/TotalesMes';
 import { useMes } from '../context/mes';
@@ -28,6 +29,17 @@ export function InicioPage() {
         <EstadoError mensaje={estado.mensaje} onReintentar={reintentar} />
       ) : null}
       {estado.tipo === 'vacio' ? <EstadoVacio mensaje="No hay movimientos en este mes." /> : null}
+
+      {estado.tipo === 'listo' || estado.tipo === 'vacio' ? (
+        <PresupuestoMes
+          mes={mes}
+          gastosCentavos={estado.datos.gastosCentavos}
+          presupuesto={estado.datos.presupuesto}
+          onActualizado={() => {
+            reintentar();
+          }}
+        />
+      ) : null}
 
       {estado.tipo === 'listo' ? (
         <>

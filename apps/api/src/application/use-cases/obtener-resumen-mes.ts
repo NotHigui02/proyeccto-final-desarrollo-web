@@ -9,6 +9,7 @@ import {
 } from '@gastos/shared';
 import type { RepositorioCategorias } from '../ports/repositorio-categorias.js';
 import type { RepositorioMovimientos } from '../ports/repositorio-movimientos.js';
+import type { RepositorioPresupuestos } from '../ports/repositorio-presupuestos.js';
 
 const MESES_EVOLUCION = 6;
 
@@ -16,14 +17,21 @@ export class ObtenerResumenMes {
   constructor(
     private readonly categorias: RepositorioCategorias,
     private readonly movimientos: RepositorioMovimientos,
+    private readonly presupuestos?: RepositorioPresupuestos,
   ) {}
 
   async ejecutar(uid: string, mes: Mes): Promise<Resumen> {
-    const categorias = await this.categorias.listar(uid);
-    const movimientos = await this.movimientosEnVentana(uid, mes);
+    const [categorias, movimientos, presupuesto] = await Promise.all([
+      this.categorias.listar(uid),
+      this.movimientosEnVentana(uid, mes),
+      this.presupuestos?.obtener(uid, mes) ?? Promise.resolve(null),
+    ]);
     const delMes = movimientos.filter((movimiento) => mesDeFecha(movimiento.fecha) === mes);
     const evolucion = this.construirEvolucion(mes, movimientos);
-    return calcularResumen(mes, delMes, categorias, evolucion);
+    return {
+      ...calcularResumen(mes, delMes, categorias, evolucion),
+      presupuesto: presupuesto ?? null,
+    };
   }
 
   private async movimientosEnVentana(uid: string, mes: Mes): Promise<readonly Movimiento[]> {

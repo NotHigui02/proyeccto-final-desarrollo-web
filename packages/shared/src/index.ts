@@ -4,4 +4,5 @@ export * from './fecha.js';
 export * from './mes.js';
 export * from './movimiento.js';
 export * from './paginacion.js';
+export * from './presupuesto.js';
 export * from './resumen.js';

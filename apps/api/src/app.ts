@@ -12,11 +12,14 @@ import type { ListarCategorias } from './application/use-cases/listar-categorias
 import type { ListarMovimientos } from './application/use-cases/listar-movimientos.js';
 import type { ObtenerEstadoSalud } from './application/use-cases/obtener-estado-salud.js';
 import type { ObtenerMovimiento } from './application/use-cases/obtener-movimiento.js';
+import type { GuardarPresupuesto } from './application/use-cases/guardar-presupuesto.js';
+import type { ObtenerPresupuesto } from './application/use-cases/obtener-presupuesto.js';
 import type { ObtenerResumenMes } from './application/use-cases/obtener-resumen-mes.js';
 import type { Entorno } from './infrastructure/config/entorno.js';
 import { registrarManejoErrores } from './infrastructure/http/manejo-errores.js';
 import { rutasCategorias } from './infrastructure/http/routes/categorias.rutas.js';
 import { rutasMovimientos } from './infrastructure/http/routes/movimientos.rutas.js';
+import { rutasPresupuestos } from './infrastructure/http/routes/presupuestos.rutas.js';
 import { rutasResumen } from './infrastructure/http/routes/resumen.rutas.js';
 import { rutasSalud } from './infrastructure/http/routes/salud.rutas.js';
 import { registrarSeguridad } from './infrastructure/http/seguridad.js';
@@ -35,6 +38,8 @@ export interface Dependencias {
   crearMovimiento: CrearMovimiento;
   actualizarMovimiento: ActualizarMovimiento;
   eliminarMovimiento: EliminarMovimiento;
+  obtenerPresupuesto: ObtenerPresupuesto;
+  guardarPresupuesto: GuardarPresupuesto;
   limitadorFrecuencia: LimitadorFrecuencia;
 }
 
@@ -95,6 +100,13 @@ export function construirApp(entorno: Entorno, dependencias: Dependencias): Fast
     crearMovimiento: dependencias.crearMovimiento,
     actualizarMovimiento: dependencias.actualizarMovimiento,
     eliminarMovimiento: dependencias.eliminarMovimiento,
+  });
+  void app.register(rutasPresupuestos, {
+    prefix: '/api',
+    uid: dependencias.uid,
+    requerirUsuario: dependencias.requerirUsuario,
+    obtenerPresupuesto: dependencias.obtenerPresupuesto,
+    guardarPresupuesto: dependencias.guardarPresupuesto,
   });
 
   return app;

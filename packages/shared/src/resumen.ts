@@ -2,6 +2,7 @@ import { z } from 'zod';
 import type { Categoria } from './categoria.js';
 import { mesSchema, type Mes } from './mes.js';
 import type { Movimiento } from './movimiento.js';
+import { presupuestoSchema } from './presupuesto.js';
 
 export const gastoPorCategoriaSchema = z.strictObject({
   categoriaId: z.string().min(1),
@@ -23,6 +24,7 @@ export const resumenSchema = z.strictObject({
   saldoCentavos: z.number().int(),
   porCategoria: z.array(gastoPorCategoriaSchema),
   evolucion: z.array(puntoEvolucionSchema),
+  presupuesto: presupuestoSchema.nullable().optional(),
 });
 
 export type GastoPorCategoria = z.infer<typeof gastoPorCategoriaSchema>;

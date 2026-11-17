@@ -1,6 +1,7 @@
 import {
   categoriaSchema,
   movimientoSchema,
+  presupuestoSchema,
   resumenSchema,
   type Categoria,
   type CategoriaEntrada,
@@ -9,6 +10,8 @@ import {
   type MovimientoEntrada,
   type Pagina,
   type Paginacion,
+  type Presupuesto,
+  type PresupuestoEntrada,
   type Resumen,
 } from '@gastos/shared';
 import { z } from 'zod';
@@ -139,4 +142,17 @@ export async function eliminarMovimiento(id: string): Promise<void> {
     headers: { Accept: 'application/json' },
   });
   if (!respuesta.ok) throw await leerError(respuesta);
+}
+
+export function obtenerPresupuesto(mes: string, señal?: AbortSignal): Promise<Presupuesto> {
+  return pedirJson(`/api/presupuestos/${encodeURIComponent(mes)}`, presupuestoSchema, {
+    signal: señal,
+  });
+}
+
+export function guardarPresupuesto(mes: string, entrada: PresupuestoEntrada): Promise<Presupuesto> {
+  return pedirJson(`/api/presupuestos/${encodeURIComponent(mes)}`, presupuestoSchema, {
+    method: 'PUT',
+    body: JSON.stringify(entrada),
+  });
 }

@@ -1,6 +1,6 @@
 # 08 · Presupuesto mensual
 
-**Estado:** Pendiente · **Hito:** 2–3 · **Enunciado:** RF-04, CA-4
+**Estado:** Hecho · **Hito:** 2–3 · **Enunciado:** RF-04, CA-4
 
 ## Objetivo
 
@@ -18,9 +18,9 @@ Permitir definir un presupuesto de gasto por mes y alertar al llegar al 80 %.
 
 ## Tareas
 
-- [ ] Regla pura + pruebas (79 %, 80 %, 100 %, > 100 %).
-- [ ] Casos de uso, puerto, rutas + pruebas.
-- [ ] Componente de presupuesto + prueba RTL de la alerta (CA-4).
+- [x] Regla pura + pruebas (79 %, 80 %, 100 %, > 100 %).
+- [x] Casos de uso, puerto, rutas + pruebas.
+- [x] Componente de presupuesto + prueba RTL de la alerta (CA-4).
 
 ## Preguntas abiertas
 
