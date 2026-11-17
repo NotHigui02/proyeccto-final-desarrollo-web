@@ -3,7 +3,7 @@
 Registro de ingresos y gastos con gráficos por categoría y por mes, dibujados a mano en SVG.
 Proyecto final de Desarrollo Web (proyecto 05). Enunciado: [`Proyectos/05-gastos-con-graficos.md`](Proyectos/05-gastos-con-graficos.md).
 
-**URL desplegada:** _pendiente de `vercel deploy --prod`._
+**URL desplegada:** [https://proyecto-final-desarrollo-web-three.vercel.app](https://proyecto-final-desarrollo-web-three.vercel.app)
 
 ## Arquitectura
 
@@ -39,14 +39,14 @@ Comprobar: `http://localhost:5173` y `http://localhost:5173/api/salud`.
 1. Crear un proyecto enlazado a este repo (raíz del monorepo).
 2. Configurar variables de entorno en el panel (no en Git):
 
-| Variable (servidor)     | Notas                                    |
-| ----------------------- | ---------------------------------------- |
-| `NODE_ENV`              | `production`                             |
-| `WEB_ORIGIN`            | URL canónica `https://…vercel.app`       |
-| `FIREBASE_PROJECT_ID`   | Admin SDK                                |
-| `FIREBASE_CLIENT_EMAIL` | Admin SDK                                |
-| `FIREBASE_PRIVATE_KEY`  | Con `\n` literales; Vercel los convierte |
-| `BLOB_READ_WRITE_TOKEN` | Store Blob **privado**                   |
+| Variable (servidor)     | Notas                                            |
+| ----------------------- | ------------------------------------------------ |
+| `NODE_ENV`              | `production`                                     |
+| `WEB_ORIGIN`            | Exactamente la URL de producción (sin `/` final) |
+| `FIREBASE_PROJECT_ID`   | Admin SDK                                        |
+| `FIREBASE_CLIENT_EMAIL` | Admin SDK (`client_email`, sin comillas)         |
+| `FIREBASE_PRIVATE_KEY`  | Con `\n` literales; **sin** comillas en Vercel   |
+| `BLOB_READ_WRITE_TOKEN` | Store Blob **privado**                           |
 
 | Variable (build / web)      | Notas             |
 | --------------------------- | ----------------- |
@@ -80,7 +80,7 @@ Documentación API: [`openapi.yaml`](openapi.yaml). Colección: [`bruno/`](bruno
 - [x] Entradas validadas con Zod; contenido de usuarios escapado (sin `dangerouslySetInnerHTML`).
 - [x] Cookie de sesión `HttpOnly`, `Secure` (producción), `SameSite=Lax`; comprobación de `Origin` al modificar datos.
 - [x] Archivos validados por tipo y tamaño en el servidor; `pathname` verificado; cuotas de Blob revisadas.
-- [ ] `npm audit` revisado y sin secretos en los logs (revisar antes de la entrega).
+- [x] `npm audit` revisado (`npm run audit:prod` → 0 high en producción; picomatch solo en tooling, sin parche upstream) y sin secretos en los logs.
 - [ ] Evidencias de calidad de la sección 14 entregadas (ver [`calidad/CALIDAD.md`](calidad/CALIDAD.md)).
 - [x] Configuración de IA propia (sección 15): la IA no lee `.env*` ni claves y no sale de la carpeta del proyecto; evidencias en `ia/`.
 
