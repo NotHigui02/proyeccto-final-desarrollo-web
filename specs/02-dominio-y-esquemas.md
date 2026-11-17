@@ -1,6 +1,6 @@
 # 02 · Dominio y esquemas compartidos
 
-**Estado:** Pendiente · **Hito:** 1 · **Enunciado:** §8, §5 (Intl), §11, CA-1
+**Estado:** Hecho · **Hito:** 1 · **Enunciado:** §8, §5 (Intl), §11, CA-1
 
 ## Objetivo
 
@@ -30,12 +30,12 @@ movimientos).
 
 ## Tareas
 
-- [ ] `dinero.ts` + pruebas (formato `1250000` → «$ 12.500», ver nota de espacio no separable).
-- [ ] `fecha.ts` + pruebas (fecha futura rechazada con reloj fijo, años bisiestos, rango del mes).
-- [ ] `categoria.ts`, `movimiento.ts`, `paginacion.ts` + pruebas de esquemas (campos desconocidos
+- [x] `dinero.ts` + pruebas (formato `1250000` → «$ 12.500», ver nota de espacio no separable).
+- [x] `fecha.ts` + pruebas (fecha futura rechazada con reloj fijo, años bisiestos, rango del mes).
+- [x] `categoria.ts`, `movimiento.ts`, `paginacion.ts` + pruebas de esquemas (campos desconocidos
       rechazados, monto 0/negativo/decimal rechazado).
-- [ ] `resumen.ts` con `calcularResumen` + prueba con 3 movimientos (§11).
-- [ ] CA-1: prueba de que un gasto de 1 250 000 centavos baja el saldo exactamente 1 250 000.
+- [x] `resumen.ts` con `calcularResumen` + prueba con 3 movimientos (§11).
+- [x] CA-1: prueba de que un gasto de 1 250 000 centavos baja el saldo exactamente 1 250 000.
 
 ## Pruebas
 

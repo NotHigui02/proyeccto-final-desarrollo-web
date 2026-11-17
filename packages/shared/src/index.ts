@@ -1,1 +1,7 @@
+export * from './categoria.js';
+export * from './dinero.js';
+export * from './fecha.js';
 export * from './mes.js';
+export * from './movimiento.js';
+export * from './paginacion.js';
+export * from './resumen.js';
