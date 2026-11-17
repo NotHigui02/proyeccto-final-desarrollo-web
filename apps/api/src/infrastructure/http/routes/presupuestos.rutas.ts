@@ -4,10 +4,10 @@ import { z } from 'zod';
 import type { RequerirUsuario } from '../../../application/ports/requerir-usuario.js';
 import type { GuardarPresupuesto } from '../../../application/use-cases/guardar-presupuesto.js';
 import type { ObtenerPresupuesto } from '../../../application/use-cases/obtener-presupuesto.js';
+import { crearHookRequerirUsuario, uidDePeticion } from '../hooks/requerir-usuario-hook.js';
 import { validar } from '../validar.js';
 
 interface OpcionesRutasPresupuestos {
-  uid: string;
   requerirUsuario: RequerirUsuario;
   obtenerPresupuesto: ObtenerPresupuesto;
   guardarPresupuesto: GuardarPresupuesto;
@@ -22,18 +22,16 @@ export const rutasPresupuestos: FastifyPluginCallback<OpcionesRutasPresupuestos>
   opciones,
   listo,
 ) => {
-  app.addHook('preHandler', async () => {
-    await opciones.requerirUsuario.ejecutar();
-  });
+  app.addHook('preHandler', crearHookRequerirUsuario(opciones.requerirUsuario));
 
   app.get('/presupuestos/:mes', async (request) => {
     const { mes } = validar(paramsMesSchema, request.params);
-    return opciones.obtenerPresupuesto.ejecutar(opciones.uid, mes);
+    return opciones.obtenerPresupuesto.ejecutar(uidDePeticion(request), mes);
   });
 
   app.put('/presupuestos/:mes', async (request) => {
     const { mes } = validar(paramsMesSchema, request.params);
-    return opciones.guardarPresupuesto.ejecutar(opciones.uid, mes, request.body);
+    return opciones.guardarPresupuesto.ejecutar(uidDePeticion(request), mes, request.body);
   });
 
   listo();

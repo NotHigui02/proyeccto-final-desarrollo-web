@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from 'react-router';
+import { NavLink, Outlet, useNavigate } from 'react-router';
+import { useSesion } from '../../context/sesion';
 import styles from './AppLayout.module.css';
 
 const ENLACES = [
@@ -9,6 +10,14 @@ const ENLACES = [
 ] as const;
 
 export function AppLayout() {
+  const { estado, cerrar } = useSesion();
+  const navigate = useNavigate();
+
+  async function manejarCerrar() {
+    await cerrar();
+    await navigate('/login');
+  }
+
   return (
     <>
       <a className={styles.saltar} href="#contenido">
@@ -29,6 +38,14 @@ export function AppLayout() {
                 </NavLink>
               </li>
             ))}
+            <li>
+              <button type="button" className={styles.enlace} onClick={() => void manejarCerrar()}>
+                Cerrar sesión
+                {estado.tipo === 'autenticado' && estado.usuario.correo
+                  ? ` (${estado.usuario.correo})`
+                  : ''}
+              </button>
+            </li>
           </ul>
         </nav>
       </header>

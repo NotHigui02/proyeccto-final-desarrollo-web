@@ -1,6 +1,6 @@
 # 11 · Autenticación y sesión
 
-**Estado:** Pendiente · **Hito:** 4 · **Enunciado:** §9.1, §9.6
+**Estado:** Hecho · **Hito:** 4 · **Enunciado:** §9.1, §9.6
 
 ## Objetivo
 
@@ -28,10 +28,10 @@ privada de la API.
 
 ## Tareas
 
-- [ ] Puerto, adaptador y `requerirUsuario` + pruebas (`401` sin cookie, `401` cookie inválida).
-- [ ] Rutas de sesión + pruebas.
-- [ ] Todas las rutas privadas usan `requerirUsuario`; prueba de autorización por objeto (`404`).
-- [ ] Página de login, contexto de sesión y guardia + pruebas RTL.
+- [x] Puerto, adaptador y `requerirUsuario` + pruebas (`401` sin cookie, `401` cookie inválida).
+- [x] Rutas de sesión + pruebas.
+- [x] Todas las rutas privadas usan `requerirUsuario`; prueba de autorización por objeto (`404`).
+- [x] Página de login, contexto de sesión y guardia + pruebas RTL.
 
 ## Dependencias por aprobar
 

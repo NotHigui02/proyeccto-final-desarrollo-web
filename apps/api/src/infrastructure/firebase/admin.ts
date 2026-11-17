@@ -5,7 +5,7 @@ import { clavePrivadaFirebase, type Entorno } from '../config/entorno.js';
 let app: App | undefined;
 
 /** Inicializa el Admin SDK una sola vez por proceso. */
-export function obtenerFirestore(entorno: Entorno): Firestore {
+export function obtenerAppFirebase(entorno: Entorno): App {
   if (
     !entorno.FIREBASE_PROJECT_ID ||
     !entorno.FIREBASE_CLIENT_EMAIL ||
@@ -26,5 +26,9 @@ export function obtenerFirestore(entorno: Entorno): Firestore {
       });
   }
 
-  return getFirestore(app);
+  return app;
+}
+
+export function obtenerFirestore(entorno: Entorno): Firestore {
+  return getFirestore(obtenerAppFirebase(entorno));
 }

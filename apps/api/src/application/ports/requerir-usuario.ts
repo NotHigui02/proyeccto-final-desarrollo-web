@@ -1,4 +1,11 @@
-/** Hasta el spec de autenticación: en demo no hace nada; en pruebas puede lanzar 401. */
+import type { UsuarioSesion } from '@gastos/shared';
+
+/** Credenciales extraídas del HTTP (sin acoplar Fastify al dominio). */
+export interface CredencialesPeticion {
+  cookieSesion?: string;
+  authorization?: string;
+}
+
 export interface RequerirUsuario {
-  ejecutar(): Promise<void>;
+  ejecutar(credenciales: CredencialesPeticion): Promise<UsuarioSesion>;
 }

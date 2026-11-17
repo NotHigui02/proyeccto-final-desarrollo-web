@@ -1,8 +1,14 @@
 import type { Dependencias } from './app.js';
+import type { RepositorioCategorias } from './application/ports/repositorio-categorias.js';
+import type { RepositorioMovimientos } from './application/ports/repositorio-movimientos.js';
+import type { RepositorioPresupuestos } from './application/ports/repositorio-presupuestos.js';
+import type { VerificadorSesion } from './application/ports/verificador-sesion.js';
 import { ActualizarCategoria } from './application/use-cases/actualizar-categoria.js';
 import { ActualizarMovimiento } from './application/use-cases/actualizar-movimiento.js';
+import { CerrarSesion } from './application/use-cases/cerrar-sesion.js';
 import { CrearCategoria } from './application/use-cases/crear-categoria.js';
 import { CrearMovimiento } from './application/use-cases/crear-movimiento.js';
+import { CrearSesion } from './application/use-cases/crear-sesion.js';
 import { EliminarCategoria } from './application/use-cases/eliminar-categoria.js';
 import { EliminarMovimiento } from './application/use-cases/eliminar-movimiento.js';
 import { ExportarMovimientosMes } from './application/use-cases/exportar-movimientos-mes.js';
@@ -13,20 +19,18 @@ import { ObtenerEstadoSalud } from './application/use-cases/obtener-estado-salud
 import { ObtenerMovimiento } from './application/use-cases/obtener-movimiento.js';
 import { ObtenerPresupuesto } from './application/use-cases/obtener-presupuesto.js';
 import { ObtenerResumenMes } from './application/use-cases/obtener-resumen-mes.js';
-import type { RepositorioCategorias } from './application/ports/repositorio-categorias.js';
-import type { RepositorioMovimientos } from './application/ports/repositorio-movimientos.js';
-import type { RepositorioPresupuestos } from './application/ports/repositorio-presupuestos.js';
-import { RequerirUsuarioDemo } from './infrastructure/auth/requerir-usuario-demo.js';
+import { ObtenerUsuarioActual } from './application/use-cases/obtener-usuario-actual.js';
+import { RequerirUsuario } from './application/use-cases/requerir-usuario.js';
 import type { Entorno } from './infrastructure/config/entorno.js';
-import { obtenerFirestore } from './infrastructure/firebase/admin.js';
+import { obtenerAppFirebase, obtenerFirestore } from './infrastructure/firebase/admin.js';
 import { RepositorioCategoriasFirestore } from './infrastructure/firebase/repositorio-categorias-firestore.js';
 import { RepositorioMovimientosFirestore } from './infrastructure/firebase/repositorio-movimientos-firestore.js';
 import { RepositorioPresupuestosFirestore } from './infrastructure/firebase/repositorio-presupuestos-firestore.js';
+import { VerificadorSesionFirebase } from './infrastructure/firebase/verificador-sesion-firebase.js';
 import { RepositorioCategoriasMemoria } from './infrastructure/memoria/repositorio-categorias-memoria.js';
+import { LimitadorMemoria } from './infrastructure/memoria/limitador-memoria.js';
 import { RepositorioMovimientosMemoria } from './infrastructure/memoria/repositorio-movimientos-memoria.js';
 import { RepositorioPresupuestosMemoria } from './infrastructure/memoria/repositorio-presupuestos-memoria.js';
-import { LimitadorMemoria } from './infrastructure/memoria/limitador-memoria.js';
-import { UID_DEMO } from './infrastructure/memoria/semilla.js';
 import { RelojSistema } from './infrastructure/reloj/reloj-sistema.js';
 
 /** Hasta 60 escrituras por IP cada minuto (plan Hobby / abuso básico). */
@@ -36,30 +40,34 @@ function crearRepositorios(entorno: Entorno): {
   categorias: RepositorioCategorias;
   movimientos: RepositorioMovimientos;
   presupuestos: RepositorioPresupuestos;
+  verificador: VerificadorSesion;
 } {
   if (entorno.NODE_ENV === 'test') {
-    return {
-      categorias: new RepositorioCategoriasMemoria(),
-      movimientos: new RepositorioMovimientosMemoria(),
-      presupuestos: new RepositorioPresupuestosMemoria(),
-    };
+    throw new Error('crearDependencias no se usa en test; use crearDependenciasPrueba');
   }
 
+  const appFirebase = obtenerAppFirebase(entorno);
   const db = obtenerFirestore(entorno);
   return {
     categorias: new RepositorioCategoriasFirestore(db),
     movimientos: new RepositorioMovimientosFirestore(db),
     presupuestos: new RepositorioPresupuestosFirestore(db),
+    verificador: new VerificadorSesionFirebase(appFirebase),
   };
 }
 
 export function crearDependencias(entorno: Entorno): Dependencias {
   const reloj = new RelojSistema();
-  const { categorias, movimientos, presupuestos } = crearRepositorios(entorno);
+  const { categorias, movimientos, presupuestos, verificador } = crearRepositorios(entorno);
+  const requerirUsuario = new RequerirUsuario(verificador);
+  const cookieSecure = entorno.NODE_ENV === 'production';
 
   return {
-    uid: UID_DEMO,
-    requerirUsuario: new RequerirUsuarioDemo(),
+    cookieSecure,
+    requerirUsuario,
+    crearSesion: new CrearSesion(verificador),
+    cerrarSesion: new CerrarSesion(verificador),
+    obtenerUsuarioActual: new ObtenerUsuarioActual(),
     obtenerEstadoSalud: new ObtenerEstadoSalud(reloj),
     obtenerResumenMes: new ObtenerResumenMes(categorias, movimientos, presupuestos),
     listarCategorias: new ListarCategorias(categorias),
@@ -75,5 +83,14 @@ export function crearDependencias(entorno: Entorno): Dependencias {
     obtenerPresupuesto: new ObtenerPresupuesto(presupuestos),
     guardarPresupuesto: new GuardarPresupuesto(presupuestos),
     limitadorFrecuencia: new LimitadorMemoria(ESCRITURAS_POR_MINUTO, 60_000),
+  };
+}
+
+/** Solo para pruebas unitarias que aún necesiten repos en memoria sin auth. */
+export function crearRepositoriosMemoria() {
+  return {
+    categorias: new RepositorioCategoriasMemoria(),
+    movimientos: new RepositorioMovimientosMemoria(),
+    presupuestos: new RepositorioPresupuestosMemoria(),
   };
 }

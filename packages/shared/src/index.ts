@@ -1,3 +1,4 @@
+export * from './auth.js';
 export * from './categoria.js';
 export * from './csv.js';
 export * from './dinero.js';

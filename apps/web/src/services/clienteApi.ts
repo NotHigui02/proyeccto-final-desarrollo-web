@@ -63,7 +63,7 @@ async function pedirJson<T>(
     cabeceras.set('Content-Type', 'application/json');
   }
 
-  const respuesta = await fetch(url, { ...init, headers: cabeceras });
+  const respuesta = await fetch(url, { credentials: 'include', ...init, headers: cabeceras });
   if (!respuesta.ok) throw await leerError(respuesta);
   return esquema.parse(await respuesta.json());
 }
@@ -95,6 +95,7 @@ export function actualizarCategoria(id: string, entrada: CategoriaEntrada): Prom
 export async function eliminarCategoria(id: string): Promise<void> {
   const respuesta = await fetch(`/api/categorias/${encodeURIComponent(id)}`, {
     method: 'DELETE',
+    credentials: 'include',
     headers: { Accept: 'application/json' },
   });
   if (!respuesta.ok) throw await leerError(respuesta);
@@ -139,6 +140,7 @@ export function actualizarMovimiento(id: string, entrada: MovimientoEntrada): Pr
 export async function eliminarMovimiento(id: string): Promise<void> {
   const respuesta = await fetch(`/api/movimientos/${encodeURIComponent(id)}`, {
     method: 'DELETE',
+    credentials: 'include',
     headers: { Accept: 'application/json' },
   });
   if (!respuesta.ok) throw await leerError(respuesta);

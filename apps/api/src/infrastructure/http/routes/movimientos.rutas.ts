@@ -8,10 +8,10 @@ import type { EliminarMovimiento } from '../../../application/use-cases/eliminar
 import type { ExportarMovimientosMes } from '../../../application/use-cases/exportar-movimientos-mes.js';
 import type { ListarMovimientos } from '../../../application/use-cases/listar-movimientos.js';
 import type { ObtenerMovimiento } from '../../../application/use-cases/obtener-movimiento.js';
+import { crearHookRequerirUsuario, uidDePeticion } from '../hooks/requerir-usuario-hook.js';
 import { validar } from '../validar.js';
 
 interface OpcionesRutasMovimientos {
-  uid: string;
   requerirUsuario: RequerirUsuario;
   listarMovimientos: ListarMovimientos;
   obtenerMovimiento: ObtenerMovimiento;
@@ -42,15 +42,13 @@ export const rutasMovimientos: FastifyPluginCallback<OpcionesRutasMovimientos> =
   opciones,
   listo,
 ) => {
-  app.addHook('preHandler', async () => {
-    await opciones.requerirUsuario.ejecutar();
-  });
+  app.addHook('preHandler', crearHookRequerirUsuario(opciones.requerirUsuario));
 
   app.get('/movimientos', async (request) => {
     const consulta = validar(consultaListaSchema, request.query);
     const { limite, cursor, mes, tipo, categoriaId } = consulta;
     return opciones.listarMovimientos.ejecutar(
-      opciones.uid,
+      uidDePeticion(request),
       { mes, tipo, categoriaId },
       { limite, cursor },
     );
@@ -59,7 +57,7 @@ export const rutasMovimientos: FastifyPluginCallback<OpcionesRutasMovimientos> =
   app.get('/movimientos/exportar', async (request, reply) => {
     const { mes } = validar(consultaExportarSchema, request.query);
     const { csv, nombreArchivo } = await opciones.exportarMovimientosMes.ejecutar(
-      opciones.uid,
+      uidDePeticion(request),
       mes,
     );
     return reply
@@ -70,22 +68,22 @@ export const rutasMovimientos: FastifyPluginCallback<OpcionesRutasMovimientos> =
 
   app.get('/movimientos/:id', async (request) => {
     const { id } = validar(paramsIdSchema, request.params);
-    return opciones.obtenerMovimiento.ejecutar(opciones.uid, id);
+    return opciones.obtenerMovimiento.ejecutar(uidDePeticion(request), id);
   });
 
   app.post('/movimientos', async (request, reply) => {
-    const creado = await opciones.crearMovimiento.ejecutar(opciones.uid, request.body);
+    const creado = await opciones.crearMovimiento.ejecutar(uidDePeticion(request), request.body);
     return reply.status(201).send(creado);
   });
 
   app.put('/movimientos/:id', async (request) => {
     const { id } = validar(paramsIdSchema, request.params);
-    return opciones.actualizarMovimiento.ejecutar(opciones.uid, id, request.body);
+    return opciones.actualizarMovimiento.ejecutar(uidDePeticion(request), id, request.body);
   });
 
   app.delete('/movimientos/:id', async (request, reply) => {
     const { id } = validar(paramsIdSchema, request.params);
-    await opciones.eliminarMovimiento.ejecutar(opciones.uid, id);
+    await opciones.eliminarMovimiento.ejecutar(uidDePeticion(request), id);
     return reply.status(204).send();
   });
 

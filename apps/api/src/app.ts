@@ -4,8 +4,10 @@ import type { LimitadorFrecuencia } from './application/ports/limitador-frecuenc
 import type { RequerirUsuario } from './application/ports/requerir-usuario.js';
 import type { ActualizarCategoria } from './application/use-cases/actualizar-categoria.js';
 import type { ActualizarMovimiento } from './application/use-cases/actualizar-movimiento.js';
+import type { CerrarSesion } from './application/use-cases/cerrar-sesion.js';
 import type { CrearCategoria } from './application/use-cases/crear-categoria.js';
 import type { CrearMovimiento } from './application/use-cases/crear-movimiento.js';
+import type { CrearSesion } from './application/use-cases/crear-sesion.js';
 import type { EliminarCategoria } from './application/use-cases/eliminar-categoria.js';
 import type { EliminarMovimiento } from './application/use-cases/eliminar-movimiento.js';
 import type { ExportarMovimientosMes } from './application/use-cases/exportar-movimientos-mes.js';
@@ -16,18 +18,24 @@ import type { ObtenerEstadoSalud } from './application/use-cases/obtener-estado-
 import type { ObtenerMovimiento } from './application/use-cases/obtener-movimiento.js';
 import type { ObtenerPresupuesto } from './application/use-cases/obtener-presupuesto.js';
 import type { ObtenerResumenMes } from './application/use-cases/obtener-resumen-mes.js';
+import type { ObtenerUsuarioActual } from './application/use-cases/obtener-usuario-actual.js';
 import type { Entorno } from './infrastructure/config/entorno.js';
 import { registrarManejoErrores } from './infrastructure/http/manejo-errores.js';
+import { rutasAuth } from './infrastructure/http/routes/auth.rutas.js';
 import { rutasCategorias } from './infrastructure/http/routes/categorias.rutas.js';
 import { rutasMovimientos } from './infrastructure/http/routes/movimientos.rutas.js';
 import { rutasPresupuestos } from './infrastructure/http/routes/presupuestos.rutas.js';
 import { rutasResumen } from './infrastructure/http/routes/resumen.rutas.js';
 import { rutasSalud } from './infrastructure/http/routes/salud.rutas.js';
 import { registrarSeguridad } from './infrastructure/http/seguridad.js';
+import './infrastructure/http/tipos-fastify.js';
 
 export interface Dependencias {
-  uid: string;
+  cookieSecure: boolean;
   requerirUsuario: RequerirUsuario;
+  crearSesion: CrearSesion;
+  cerrarSesion: CerrarSesion;
+  obtenerUsuarioActual: ObtenerUsuarioActual;
   obtenerEstadoSalud: ObtenerEstadoSalud;
   obtenerResumenMes: ObtenerResumenMes;
   listarCategorias: ListarCategorias;
@@ -79,15 +87,22 @@ export function construirApp(entorno: Entorno, dependencias: Dependencias): Fast
     prefix: '/api',
     obtenerEstadoSalud: dependencias.obtenerEstadoSalud,
   });
+  void app.register(rutasAuth, {
+    prefix: '/api',
+    cookieSecure: dependencias.cookieSecure,
+    requerirUsuario: dependencias.requerirUsuario,
+    crearSesion: dependencias.crearSesion,
+    cerrarSesion: dependencias.cerrarSesion,
+    obtenerUsuarioActual: dependencias.obtenerUsuarioActual,
+  });
   void app.register(rutasResumen, {
     prefix: '/api',
-    uid: dependencias.uid,
     requerirUsuario: dependencias.requerirUsuario,
     obtenerResumenMes: dependencias.obtenerResumenMes,
   });
   void app.register(rutasCategorias, {
     prefix: '/api',
-    uid: dependencias.uid,
+    requerirUsuario: dependencias.requerirUsuario,
     listarCategorias: dependencias.listarCategorias,
     crearCategoria: dependencias.crearCategoria,
     actualizarCategoria: dependencias.actualizarCategoria,
@@ -95,7 +110,6 @@ export function construirApp(entorno: Entorno, dependencias: Dependencias): Fast
   });
   void app.register(rutasMovimientos, {
     prefix: '/api',
-    uid: dependencias.uid,
     requerirUsuario: dependencias.requerirUsuario,
     listarMovimientos: dependencias.listarMovimientos,
     obtenerMovimiento: dependencias.obtenerMovimiento,
@@ -106,7 +120,6 @@ export function construirApp(entorno: Entorno, dependencias: Dependencias): Fast
   });
   void app.register(rutasPresupuestos, {
     prefix: '/api',
-    uid: dependencias.uid,
     requerirUsuario: dependencias.requerirUsuario,
     obtenerPresupuesto: dependencias.obtenerPresupuesto,
     guardarPresupuesto: dependencias.guardarPresupuesto,
