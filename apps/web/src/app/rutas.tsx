@@ -1,20 +1,48 @@
+import { lazy } from 'react';
 import type { RouteObject } from 'react-router';
 import { AppLayout } from '../components/layout/AppLayout';
 import { MesProvider } from '../context/MesProvider';
 import { SesionProvider } from '../context/SesionProvider';
-import { CategoriasPage } from '../pages/CategoriasPage';
-import { InicioPage } from '../pages/InicioPage';
-import { LoginPage } from '../pages/LoginPage';
-import { MovimientosPage } from '../pages/MovimientosPage';
-import { NoEncontradoPage } from '../pages/NoEncontradoPage';
-import { NuevoMovimientoPage } from '../pages/NuevoMovimientoPage';
+import { ConSuspense } from './ConSuspense';
 import { GuardiaSesion } from './GuardiaSesion';
+
+const LoginPage = lazy(async () => {
+  const modulo = await import('../pages/LoginPage');
+  return { default: modulo.LoginPage };
+});
+const InicioPage = lazy(async () => {
+  const modulo = await import('../pages/InicioPage');
+  return { default: modulo.InicioPage };
+});
+const MovimientosPage = lazy(async () => {
+  const modulo = await import('../pages/MovimientosPage');
+  return { default: modulo.MovimientosPage };
+});
+const NuevoMovimientoPage = lazy(async () => {
+  const modulo = await import('../pages/NuevoMovimientoPage');
+  return { default: modulo.NuevoMovimientoPage };
+});
+const CategoriasPage = lazy(async () => {
+  const modulo = await import('../pages/CategoriasPage');
+  return { default: modulo.CategoriasPage };
+});
+const NoEncontradoPage = lazy(async () => {
+  const modulo = await import('../pages/NoEncontradoPage');
+  return { default: modulo.NoEncontradoPage };
+});
 
 export const rutas: RouteObject[] = [
   {
     element: <SesionProvider />,
     children: [
-      { path: 'login', element: <LoginPage /> },
+      {
+        path: 'login',
+        element: (
+          <ConSuspense>
+            <LoginPage />
+          </ConSuspense>
+        ),
+      },
       {
         element: <GuardiaSesion />,
         children: [
@@ -25,11 +53,46 @@ export const rutas: RouteObject[] = [
               </MesProvider>
             ),
             children: [
-              { index: true, element: <InicioPage /> },
-              { path: 'movimientos', element: <MovimientosPage /> },
-              { path: 'movimientos/nuevo', element: <NuevoMovimientoPage /> },
-              { path: 'categorias', element: <CategoriasPage /> },
-              { path: '*', element: <NoEncontradoPage /> },
+              {
+                index: true,
+                element: (
+                  <ConSuspense>
+                    <InicioPage />
+                  </ConSuspense>
+                ),
+              },
+              {
+                path: 'movimientos',
+                element: (
+                  <ConSuspense>
+                    <MovimientosPage />
+                  </ConSuspense>
+                ),
+              },
+              {
+                path: 'movimientos/nuevo',
+                element: (
+                  <ConSuspense>
+                    <NuevoMovimientoPage />
+                  </ConSuspense>
+                ),
+              },
+              {
+                path: 'categorias',
+                element: (
+                  <ConSuspense>
+                    <CategoriasPage />
+                  </ConSuspense>
+                ),
+              },
+              {
+                path: '*',
+                element: (
+                  <ConSuspense>
+                    <NoEncontradoPage />
+                  </ConSuspense>
+                ),
+              },
             ],
           },
         ],

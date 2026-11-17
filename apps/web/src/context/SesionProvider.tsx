@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Outlet } from 'react-router';
+import { AnuncioRuta } from '../app/AnuncioRuta';
 import { cerrarSesion, iniciarSesion, obtenerUsuarioActual } from '../services/authCliente';
 import { SesionContext, type EstadoSesion, type SesionContextValor } from './sesion';
 
@@ -34,5 +35,10 @@ export function SesionProvider({ children }: { children?: ReactNode }) {
     [estado, iniciar, cerrar, refrescar],
   );
 
-  return <SesionContext.Provider value={valor}>{children ?? <Outlet />}</SesionContext.Provider>;
+  return (
+    <SesionContext.Provider value={valor}>
+      <AnuncioRuta />
+      {children ?? <Outlet />}
+    </SesionContext.Provider>
+  );
 }

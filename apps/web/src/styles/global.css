@@ -39,6 +39,32 @@
   }
 }
 
+@media (prefers-contrast: more) {
+  :root {
+    --color-fondo: #ffffff;
+    --color-superficie: #ffffff;
+    --color-texto: #000000;
+    --color-texto-suave: #000000;
+    --color-borde: #000000;
+    --color-primario: #004d40;
+    --color-sobre-primario: #ffffff;
+    --color-foco: #0000ee;
+  }
+}
+
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  :root {
+    --color-fondo: #000000;
+    --color-superficie: #000000;
+    --color-texto: #ffffff;
+    --color-texto-suave: #ffffff;
+    --color-borde: #ffffff;
+    --color-primario: #5fd0b3;
+    --color-sobre-primario: #000000;
+    --color-foco: #ffff00;
+  }
+}
+
 *,
 *::before,
 *::after {

@@ -45,8 +45,8 @@ describe('AppLayout', () => {
         'aria-current',
         'page',
       );
+      expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
     });
-    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
   });
 
   it('muestra la página 404 en rutas desconocidas', async () => {
