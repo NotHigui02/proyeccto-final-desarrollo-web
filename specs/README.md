@@ -9,7 +9,7 @@ y se implementa en orden. Al terminar un spec: `npm run check`, actualizar su es
 | 00  | [Visión y arquitectura](00-vision-y-arquitectura.md)                 | Decisiones y adaptaciones al enunciado    | —    | Hecho     |
 | 01  | [Configuración del proyecto e IA](01-configuracion-proyecto-e-ia.md) | §15, estructura, calidad automática       | 1    | Hecho     |
 | 02  | [Dominio y esquemas compartidos](02-dominio-y-esquemas.md)           | §8, dinero en centavos, Intl, CA-1        | 1    | Hecho     |
-| 03  | [Resumen y gráficos con datos de ejemplo](03-resumen-y-graficos.md)  | RF-02, RF-03, RF-05, §5, §6, CA-2, CA-3   | 1    | Pendiente |
+| 03  | [Resumen y gráficos con datos de ejemplo](03-resumen-y-graficos.md)  | RF-02, RF-03, RF-05, §5, §6, CA-2, CA-3   | 1    | Hecho     |
 | 04  | [Base de la API REST](04-api-base.md)                                | §9.2, §9.6 (cabeceras, CORS, límites)     | 3    | Pendiente |
 | 05  | [Categorías](05-categorias.md)                                       | RF-01 (categorías), §8                    | 2–3  | Pendiente |
 | 06  | [Movimientos](06-movimientos.md)                                     | RF-01 (movimientos), §8, lista con cursor | 2–3  | Pendiente |

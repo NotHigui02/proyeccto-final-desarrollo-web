@@ -57,6 +57,7 @@ describe('calcularResumen', () => {
           gastoCentavos: 500_000,
         },
       ],
+      evolucion: [],
     });
   });
 

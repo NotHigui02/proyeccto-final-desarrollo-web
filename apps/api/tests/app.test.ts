@@ -3,14 +3,17 @@ import { z } from 'zod';
 import { construirApp } from '../src/app.js';
 import type { Reloj } from '../src/application/ports/reloj.js';
 import { ObtenerEstadoSalud } from '../src/application/use-cases/obtener-estado-salud.js';
+import { ObtenerResumenMes } from '../src/application/use-cases/obtener-resumen-mes.js';
 import { ErrorConflicto } from '../src/domain/errors/errores-dominio.js';
 import { cargarEntorno } from '../src/infrastructure/config/entorno.js';
+import { RepositorioDatosEjemplo } from '../src/infrastructure/memoria/datos-ejemplo.js';
 
 const relojFijo: Reloj = { ahora: () => new Date('2026-11-17T15:00:00.000Z') };
 
 function crearApp() {
   return construirApp(cargarEntorno({ NODE_ENV: 'test' }), {
     obtenerEstadoSalud: new ObtenerEstadoSalud(relojFijo),
+    obtenerResumenMes: new ObtenerResumenMes(new RepositorioDatosEjemplo()),
   });
 }
 
@@ -22,6 +25,37 @@ describe('GET /api/salud', () => {
     expect(respuesta.json<unknown>()).toEqual({ estado: 'ok', fecha: '2026-11-17T15:00:00.000Z' });
     expect(respuesta.headers['cache-control']).toBe('no-store');
     expect(respuesta.headers['x-request-id']).toEqual(expect.any(String));
+  });
+});
+
+describe('GET /api/resumen', () => {
+  it('responde 200 con totales del mes y evolución', async () => {
+    const respuesta = await crearApp().inject({ method: 'GET', url: '/api/resumen?mes=2026-11' });
+    const cuerpo = respuesta.json<{
+      mes: string;
+      ingresosCentavos: number;
+      gastosCentavos: number;
+      saldoCentavos: number;
+      porCategoria: unknown[];
+      evolucion: unknown[];
+    }>();
+
+    expect(respuesta.statusCode).toBe(200);
+    expect(cuerpo.mes).toBe('2026-11');
+    expect(cuerpo.ingresosCentavos).toBe(3_000_000);
+    expect(cuerpo.gastosCentavos).toBe(2_500_000);
+    expect(cuerpo.saldoCentavos).toBe(500_000);
+    expect(cuerpo.porCategoria).toHaveLength(3);
+    expect(cuerpo.evolucion).toHaveLength(6);
+  });
+
+  it('responde 400 si el mes es inválido', async () => {
+    const respuesta = await crearApp().inject({ method: 'GET', url: '/api/resumen?mes=2026-13' });
+    expect(respuesta.statusCode).toBe(400);
+    expect(respuesta.json<unknown>()).toEqual({
+      error: 'Mes inválido',
+      detalles: [{ campo: 'mes', mensaje: 'El mes debe tener el formato AAAA-MM' }],
+    });
   });
 });
 

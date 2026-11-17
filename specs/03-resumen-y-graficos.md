@@ -1,6 +1,6 @@
 # 03 · Resumen y gráficos con datos de ejemplo
 
-**Estado:** Pendiente · **Hito:** 1 · **Enunciado:** RF-02, RF-03, RF-05, §4, §5, §6, CA-2, CA-3
+**Estado:** Hecho · **Hito:** 1 · **Enunciado:** RF-02, RF-03, RF-05, §4, §5, §6, CA-2, CA-3
 
 ## Objetivo
 
@@ -25,12 +25,12 @@ datos vienen de un endpoint de ejemplo (`GET /api/resumen` con datos en memoria)
 
 ## Tareas
 
-- [ ] Endpoint de ejemplo `GET /api/resumen?mes=` (caso de uso + repositorio en memoria con datos semilla).
-- [ ] `clienteApi` + `useResumenMes(mes)` con estados carga/vacío/error/reintento.
-- [ ] `MesContext` + `SelectorMes` sincronizados con la URL.
-- [ ] `GraficoTorta`, `GraficoBarras`, `TablaDatosGrafico`, `useTamanoContenedor`.
-- [ ] Tarjetas de totales (ingresos, gastos, saldo) sin depender solo del color.
-- [ ] Página `/` responsiva en 360/768/1024 px.
+- [x] Endpoint de ejemplo `GET /api/resumen?mes=` (caso de uso + repositorio en memoria con datos semilla).
+- [x] `clienteApi` + `useResumenMes(mes)` con estados carga/vacío/error/reintento.
+- [x] `MesContext` + `SelectorMes` sincronizados con la URL.
+- [x] `GraficoTorta`, `GraficoBarras`, `TablaDatosGrafico`, `useTamanoContenedor`.
+- [x] Tarjetas de totales (ingresos, gastos, saldo) sin depender solo del color.
+- [x] Página `/` responsiva en 360/768/1024 px.
 
 ## Pruebas
 
