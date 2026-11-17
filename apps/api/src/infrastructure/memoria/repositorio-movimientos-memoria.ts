@@ -58,10 +58,11 @@ export class RepositorioMovimientosMemoria implements RepositorioMovimientos {
     }
 
     const pagina = items.slice(0, paginacion.limite);
-    const siguiente = items[paginacion.limite];
+    const hayMas = items.length > paginacion.limite;
+    const ultimo = pagina[pagina.length - 1];
     return Promise.resolve({
       items: pagina,
-      siguienteCursor: siguiente?.id ?? null,
+      siguienteCursor: hayMas && ultimo ? ultimo.id : null,
     });
   }
 

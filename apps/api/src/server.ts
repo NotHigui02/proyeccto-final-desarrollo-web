@@ -8,7 +8,7 @@ if (existsSync('.env')) {
 }
 
 const entorno = cargarEntorno(process.env);
-const app = construirApp(entorno, crearDependencias());
+const app = construirApp(entorno, crearDependencias(entorno));
 
 try {
   await app.listen({ host: entorno.HOST, port: entorno.PORT });

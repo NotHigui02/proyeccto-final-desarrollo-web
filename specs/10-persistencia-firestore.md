@@ -1,6 +1,6 @@
 # 10 · Persistencia en Firestore
 
-**Estado:** Pendiente · **Hito:** 3 · **Enunciado:** §9.3, §9.4, §9.6
+**Estado:** Hecho · **Hito:** 3 · **Enunciado:** §9.3, §9.4, §9.6
 
 ## Objetivo
 
@@ -20,10 +20,10 @@ Implementar los adaptadores Firestore de los puertos de repositorio sin tocar ca
 
 ## Tareas
 
-- [ ] Configuración del Admin SDK (requiere que el usuario cree el proyecto Firebase y su `.env`).
-- [ ] Adaptadores + pruebas de contrato compartidas con el adaptador en memoria.
-- [ ] Reglas e índices versionados.
+- [x] Configuración del Admin SDK (requiere que el usuario cree el proyecto Firebase y su `.env`).
+- [x] Adaptadores + pruebas de contrato compartidas con el adaptador en memoria.
+- [x] Reglas e índices versionados.
 
 ## Dependencias por aprobar
 
-`firebase-admin` (en `apps/api`).
+`firebase-admin` (en `apps/api`) — **aprobada e instalada**.

@@ -13,7 +13,15 @@ import { ObtenerEstadoSalud } from './application/use-cases/obtener-estado-salud
 import { ObtenerMovimiento } from './application/use-cases/obtener-movimiento.js';
 import { ObtenerPresupuesto } from './application/use-cases/obtener-presupuesto.js';
 import { ObtenerResumenMes } from './application/use-cases/obtener-resumen-mes.js';
+import type { RepositorioCategorias } from './application/ports/repositorio-categorias.js';
+import type { RepositorioMovimientos } from './application/ports/repositorio-movimientos.js';
+import type { RepositorioPresupuestos } from './application/ports/repositorio-presupuestos.js';
 import { RequerirUsuarioDemo } from './infrastructure/auth/requerir-usuario-demo.js';
+import type { Entorno } from './infrastructure/config/entorno.js';
+import { obtenerFirestore } from './infrastructure/firebase/admin.js';
+import { RepositorioCategoriasFirestore } from './infrastructure/firebase/repositorio-categorias-firestore.js';
+import { RepositorioMovimientosFirestore } from './infrastructure/firebase/repositorio-movimientos-firestore.js';
+import { RepositorioPresupuestosFirestore } from './infrastructure/firebase/repositorio-presupuestos-firestore.js';
 import { RepositorioCategoriasMemoria } from './infrastructure/memoria/repositorio-categorias-memoria.js';
 import { RepositorioMovimientosMemoria } from './infrastructure/memoria/repositorio-movimientos-memoria.js';
 import { RepositorioPresupuestosMemoria } from './infrastructure/memoria/repositorio-presupuestos-memoria.js';
@@ -24,11 +32,30 @@ import { RelojSistema } from './infrastructure/reloj/reloj-sistema.js';
 /** Hasta 60 escrituras por IP cada minuto (plan Hobby / abuso básico). */
 const ESCRITURAS_POR_MINUTO = 60;
 
-export function crearDependencias(): Dependencias {
+function crearRepositorios(entorno: Entorno): {
+  categorias: RepositorioCategorias;
+  movimientos: RepositorioMovimientos;
+  presupuestos: RepositorioPresupuestos;
+} {
+  if (entorno.NODE_ENV === 'test') {
+    return {
+      categorias: new RepositorioCategoriasMemoria(),
+      movimientos: new RepositorioMovimientosMemoria(),
+      presupuestos: new RepositorioPresupuestosMemoria(),
+    };
+  }
+
+  const db = obtenerFirestore(entorno);
+  return {
+    categorias: new RepositorioCategoriasFirestore(db),
+    movimientos: new RepositorioMovimientosFirestore(db),
+    presupuestos: new RepositorioPresupuestosFirestore(db),
+  };
+}
+
+export function crearDependencias(entorno: Entorno): Dependencias {
   const reloj = new RelojSistema();
-  const categorias = new RepositorioCategoriasMemoria();
-  const movimientos = new RepositorioMovimientosMemoria();
-  const presupuestos = new RepositorioPresupuestosMemoria();
+  const { categorias, movimientos, presupuestos } = crearRepositorios(entorno);
 
   return {
     uid: UID_DEMO,
