@@ -1,0 +1,20 @@
+.envoltorio {
+  margin: var(--espacio-3) 0;
+}
+
+.enlace {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  padding-inline: var(--espacio-3);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  text-decoration: none;
+  font: inherit;
+}
+
+.enlace:hover {
+  background: var(--color-superficie);
+}

@@ -1,0 +1,23 @@
+meta {
+  name: Crear categoría (201)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/categorias
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Origin: http://localhost:5173
+}
+
+body:json {
+  {
+    "nombre": "Prueba Bruno",
+    "color": "#0B5D4B"
+  }
+}

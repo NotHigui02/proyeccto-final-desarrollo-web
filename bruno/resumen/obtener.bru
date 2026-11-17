@@ -1,0 +1,11 @@
+meta {
+  name: Resumen del mes (200)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/resumen?mes={{mes}}
+  body: none
+  auth: inherit
+}

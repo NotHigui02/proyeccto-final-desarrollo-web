@@ -1,0 +1,19 @@
+.tabla {
+  inline-size: 100%;
+  margin-block-start: var(--espacio-3);
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.caption {
+  text-align: start;
+  font-weight: 700;
+  margin-block-end: var(--espacio-2);
+}
+
+.tabla th,
+.tabla td {
+  padding: var(--espacio-2);
+  border: 1px solid var(--color-borde);
+  text-align: start;
+}

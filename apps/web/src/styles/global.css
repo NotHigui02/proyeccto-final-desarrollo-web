@@ -1,0 +1,104 @@
+:root {
+  color-scheme: light dark;
+
+  --color-fondo: #ffffff;
+  --color-superficie: #f1f5f4;
+  --color-texto: #1a2421;
+  --color-texto-suave: #4a5652;
+  --color-borde: #c9d3d0;
+  --color-primario: #0b5d4b;
+  --color-sobre-primario: #ffffff;
+  --color-foco: #1d4ed8;
+
+  --espacio-1: 0.25rem;
+  --espacio-2: 0.5rem;
+  --espacio-3: 1rem;
+  --espacio-4: 1.5rem;
+  --radio: 0.5rem;
+
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  font-size: 100%;
+  line-height: 1.5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-fondo: #111816;
+    --color-superficie: #1c2623;
+    --color-texto: #e8efed;
+    --color-texto-suave: #b4c0bc;
+    --color-borde: #3a4743;
+    --color-primario: #5fd0b3;
+    --color-sobre-primario: #0b1f1a;
+    --color-foco: #93c5fd;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --color-fondo: #ffffff;
+    --color-superficie: #ffffff;
+    --color-texto: #000000;
+    --color-texto-suave: #000000;
+    --color-borde: #000000;
+    --color-primario: #004d40;
+    --color-sobre-primario: #ffffff;
+    --color-foco: #0000ee;
+  }
+}
+
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  :root {
+    --color-fondo: #000000;
+    --color-superficie: #000000;
+    --color-texto: #ffffff;
+    --color-texto-suave: #ffffff;
+    --color-borde: #ffffff;
+    --color-primario: #5fd0b3;
+    --color-sobre-primario: #000000;
+    --color-foco: #ffff00;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100dvh;
+}
+
+h1 {
+  font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);
+  line-height: 1.2;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

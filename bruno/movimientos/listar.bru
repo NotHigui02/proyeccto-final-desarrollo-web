@@ -1,0 +1,11 @@
+meta {
+  name: Listar movimientos (200)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/movimientos?mes={{mes}}&limite=20
+  body: none
+  auth: inherit
+}

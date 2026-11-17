@@ -1,0 +1,734 @@
+openapi: 3.1.0
+info:
+  title: Gastos con gráficos · API
+  version: 0.1.0
+  description: |
+    API REST del control de ingresos y gastos. El `uid` sale siempre de la sesión
+    (cookie HttpOnly o Bearer). Dinero en centavos enteros; fechas de negocio YYYY-MM-DD.
+servers:
+  - url: http://127.0.0.1:3000
+    description: Local
+  - url: https://{host}
+    description: Producción
+    variables:
+      host:
+        default: ejemplo.vercel.app
+security:
+  - cookieAuth: []
+  - bearerAuth: []
+tags:
+  - name: Salud
+  - name: Auth
+  - name: Resumen
+  - name: Categorías
+  - name: Movimientos
+  - name: Presupuestos
+  - name: Comprobantes
+paths:
+  /api/salud:
+    get:
+      tags: [Salud]
+      summary: Estado del servicio
+      security: []
+      responses:
+        '200':
+          description: Servicio disponible
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Salud'
+  /api/auth/sesion:
+    post:
+      tags: [Auth]
+      summary: Crear cookie de sesión desde idToken de Firebase
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrearSesion'
+      responses:
+        '204':
+          description: Sesión creada (Set-Cookie sesion)
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/ErrorValidacion'
+        '401':
+          $ref: '#/components/responses/ErrorNoAutenticado'
+    delete:
+      tags: [Auth]
+      summary: Cerrar sesión y borrar cookie
+      responses:
+        '204':
+          description: Cookie borrada (revoca refresh tokens si había sesión)
+  /api/auth/yo:
+    get:
+      tags: [Auth]
+      summary: Usuario de la sesión actual
+      responses:
+        '200':
+          description: Usuario autenticado
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [usuario]
+                additionalProperties: false
+                properties:
+                  usuario:
+                    $ref: '#/components/schemas/UsuarioSesion'
+        '401':
+          $ref: '#/components/responses/ErrorNoAutenticado'
+  /api/resumen:
+    get:
+      tags: [Resumen]
+      summary: Totales del mes, por categoría y evolución
+      parameters:
+        - $ref: '#/components/parameters/MesQuery'
+      responses:
+        '200':
+          description: Resumen del mes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resumen'
+        '400':
+          $ref: '#/components/responses/ErrorValidacion'
+        '401':
+          $ref: '#/components/responses/ErrorNoAutenticado'
+  /api/categorias:
+    get:
+      tags: [Categorías]
+      summary: Listar categorías del usuario
+      responses:
+        '200':
+          description: Lista
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                additionalProperties: false
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Categoria'
+        '401':
+          $ref: '#/components/responses/ErrorNoAutenticado'
+    post:
+      tags: [Categorías]
+      summary: Crear categoría
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoriaEntrada'
+      responses:
+        '201':
+          description: Creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Categoria'
+        '400':
+          $ref: '#/components/responses/ErrorValidacion'
+        '401':
+          $ref: '#/components/responses/ErrorNoAutenticado'
+        '409':
+          $ref: '#/components/responses/ErrorConflicto'
+  /api/categorias/{id}:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    put:
+      tags: [Categorías]
+      summary: Actualizar categoría
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoriaEntrada'
+      responses:
+        '200':
+          description: Actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Categoria'
+        '400':
+          $ref: '#/components/responses/ErrorValidacion'
+        '401':
+          $ref: '#/components/responses/ErrorNoAutenticado'
+        '404':
+          $ref: '#/components/responses/ErrorNoEncontrado'
+        '409':
+          $ref: '#/components/responses/ErrorConflicto'
+    delete:
+      tags: [Categorías]
+      summary: Eliminar categoría
+      responses:
+        '204':
+          description: Eliminada
+        '401':
+          $ref: '#/components/responses/ErrorNoAutenticado'
+        '404':
+          $ref: '#/components/responses/ErrorNoEncontrado'
+        '409':
+          $ref: '#/components/responses/ErrorConflicto'
+  /api/movimientos:
+    get:
+      tags: [Movimientos]
+      summary: Listar movimientos con filtros y cursor
+      parameters:
+        - name: mes
+          in: query
+          schema:
+            $ref: '#/components/schemas/Mes'
+        - name: tipo
+          in: query
+          schema:
+            $ref: '#/components/schemas/TipoMovimiento'
+        - name: categoriaId
+          in: query
+          schema:
+            type: string
+            minLength: 1
+        - name: limite
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: cursor
+          in: query
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Página de movimientos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginaMovimientos'
+        '400':
+          $ref: '#/components/responses/ErrorValidacion'
+        '401':
+          $ref: '#/components/responses/ErrorNoAutenticado'
+    post:
+      tags: [Movimientos]
+      summary: Crear movimiento
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovimientoEntrada'
+      responses:
+        '201':
+          description: Creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movimiento'
+        '400':
+          $ref: '#/components/responses/ErrorValidacion'
+        '401':
+          $ref: '#/components/responses/ErrorNoAutenticado'
+        '404':
+          $ref: '#/components/responses/ErrorNoEncontrado'
+  /api/movimientos/exportar:
+    get:
+      tags: [Movimientos]
+      summary: Exportar movimientos del mes a CSV
+      parameters:
+        - $ref: '#/components/parameters/MesQuery'
+      responses:
+        '200':
+          description: CSV con BOM UTF-8
+          content:
+            text/csv:
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/ErrorValidacion'
+        '401':
+          $ref: '#/components/responses/ErrorNoAutenticado'
+  /api/movimientos/{id}:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    get:
+      tags: [Movimientos]
+      summary: Obtener movimiento
+      responses:
+        '200':
+          description: Movimiento
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movimiento'
+        '401':
+          $ref: '#/components/responses/ErrorNoAutenticado'
+        '404':
+          $ref: '#/components/responses/ErrorNoEncontrado'
+    put:
+      tags: [Movimientos]
+      summary: Actualizar movimiento
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovimientoEntrada'
+      responses:
+        '200':
+          description: Actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movimiento'
+        '400':
+          $ref: '#/components/responses/ErrorValidacion'
+        '401':
+          $ref: '#/components/responses/ErrorNoAutenticado'
+        '404':
+          $ref: '#/components/responses/ErrorNoEncontrado'
+    delete:
+      tags: [Movimientos]
+      summary: Eliminar movimiento (y su comprobante si existe)
+      responses:
+        '204':
+          description: Eliminado
+        '401':
+          $ref: '#/components/responses/ErrorNoAutenticado'
+        '404':
+          $ref: '#/components/responses/ErrorNoEncontrado'
+  /api/movimientos/{id}/comprobante:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    get:
+      tags: [Comprobantes]
+      summary: Descargar comprobante del dueño
+      responses:
+        '200':
+          description: Archivo (jpeg, png, webp o pdf)
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/webp:
+              schema:
+                type: string
+                format: binary
+        '401':
+          $ref: '#/components/responses/ErrorNoAutenticado'
+        '404':
+          $ref: '#/components/responses/ErrorNoEncontrado'
+    post:
+      tags: [Comprobantes]
+      summary: Registrar pathname tras subida cliente a Blob
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrarComprobante'
+      responses:
+        '200':
+          description: Movimiento con comprobanteUrl
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movimiento'
+        '400':
+          $ref: '#/components/responses/ErrorValidacion'
+        '401':
+          $ref: '#/components/responses/ErrorNoAutenticado'
+        '403':
+          $ref: '#/components/responses/ErrorProhibido'
+        '404':
+          $ref: '#/components/responses/ErrorNoEncontrado'
+        '415':
+          $ref: '#/components/responses/ErrorTipoNoSoportado'
+    delete:
+      tags: [Comprobantes]
+      summary: Eliminar comprobante del movimiento
+      responses:
+        '200':
+          description: Movimiento sin comprobante
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movimiento'
+        '401':
+          $ref: '#/components/responses/ErrorNoAutenticado'
+        '404':
+          $ref: '#/components/responses/ErrorNoEncontrado'
+  /api/comprobantes/upload:
+    post:
+      tags: [Comprobantes]
+      summary: handleUpload de Vercel Blob (token de subida cliente)
+      description: |
+        Cuerpo según `@vercel/blob/client`. El pathname debe empezar por `usuarios/<uid>/`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Token de cliente o acuse de upload completado
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/ErrorValidacion'
+        '401':
+          $ref: '#/components/responses/ErrorNoAutenticado'
+        '403':
+          $ref: '#/components/responses/ErrorProhibido'
+        '415':
+          $ref: '#/components/responses/ErrorTipoNoSoportado'
+  /api/presupuestos/{mes}:
+    parameters:
+      - name: mes
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Mes'
+    get:
+      tags: [Presupuestos]
+      summary: Obtener presupuesto del mes
+      responses:
+        '200':
+          description: Presupuesto (o 404 si no hay)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Presupuesto'
+        '400':
+          $ref: '#/components/responses/ErrorValidacion'
+        '401':
+          $ref: '#/components/responses/ErrorNoAutenticado'
+        '404':
+          $ref: '#/components/responses/ErrorNoEncontrado'
+    put:
+      tags: [Presupuestos]
+      summary: Guardar presupuesto del mes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PresupuestoEntrada'
+      responses:
+        '200':
+          description: Guardado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Presupuesto'
+        '400':
+          $ref: '#/components/responses/ErrorValidacion'
+        '401':
+          $ref: '#/components/responses/ErrorNoAutenticado'
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sesion
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Firebase idToken
+  parameters:
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 1
+    MesQuery:
+      name: mes
+      in: query
+      required: true
+      schema:
+        $ref: '#/components/schemas/Mes'
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      additionalProperties: false
+      properties:
+        error:
+          type: string
+        detalles:
+          type: array
+          items:
+            type: object
+            required: [campo, mensaje]
+            additionalProperties: false
+            properties:
+              campo:
+                type: string
+              mensaje:
+                type: string
+    Salud:
+      type: object
+      required: [estado, fecha]
+      additionalProperties: false
+      properties:
+        estado:
+          type: string
+          const: ok
+        fecha:
+          type: string
+          format: date-time
+    Mes:
+      type: string
+      pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$'
+      example: '2026-11'
+    CrearSesion:
+      type: object
+      required: [idToken]
+      additionalProperties: false
+      properties:
+        idToken:
+          type: string
+          minLength: 1
+    UsuarioSesion:
+      type: object
+      required: [uid, correo, rol]
+      additionalProperties: false
+      properties:
+        uid:
+          type: string
+          minLength: 1
+        correo:
+          type: [string, 'null']
+          format: email
+        rol:
+          type: string
+          enum: [usuario, admin]
+    CategoriaEntrada:
+      type: object
+      required: [nombre, color]
+      additionalProperties: false
+      properties:
+        nombre:
+          type: string
+          minLength: 1
+          maxLength: 40
+        color:
+          type: string
+          pattern: '^#[0-9A-Fa-f]{6}$'
+    Categoria:
+      allOf:
+        - $ref: '#/components/schemas/CategoriaEntrada'
+        - type: object
+          required: [id]
+          properties:
+            id:
+              type: string
+              minLength: 1
+    TipoMovimiento:
+      type: string
+      enum: [ingreso, gasto]
+    MovimientoEntrada:
+      type: object
+      required: [tipo, montoCentavos, categoriaId, nota, fecha, comprobanteUrl]
+      additionalProperties: false
+      properties:
+        tipo:
+          $ref: '#/components/schemas/TipoMovimiento'
+        montoCentavos:
+          type: integer
+          minimum: 1
+        categoriaId:
+          type: string
+          minLength: 1
+        nota:
+          type: [string, 'null']
+          maxLength: 200
+        fecha:
+          type: string
+          format: date
+        comprobanteUrl:
+          type: 'null'
+    Movimiento:
+      type: object
+      required: [id, tipo, montoCentavos, categoriaId, nota, fecha, comprobanteUrl]
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          minLength: 1
+        tipo:
+          $ref: '#/components/schemas/TipoMovimiento'
+        montoCentavos:
+          type: integer
+          minimum: 1
+        categoriaId:
+          type: string
+          minLength: 1
+        nota:
+          type: [string, 'null']
+          maxLength: 200
+        fecha:
+          type: string
+          format: date
+        comprobanteUrl:
+          type: [string, 'null']
+          format: uri
+    PaginaMovimientos:
+      type: object
+      required: [items, siguienteCursor]
+      additionalProperties: false
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Movimiento'
+        siguienteCursor:
+          type: [string, 'null']
+    PresupuestoEntrada:
+      type: object
+      required: [montoCentavos]
+      additionalProperties: false
+      properties:
+        montoCentavos:
+          type: integer
+          minimum: 1
+    Presupuesto:
+      type: object
+      required: [mes, montoCentavos]
+      additionalProperties: false
+      properties:
+        mes:
+          $ref: '#/components/schemas/Mes'
+        montoCentavos:
+          type: integer
+          minimum: 1
+    GastoPorCategoria:
+      type: object
+      required: [categoriaId, nombre, color, gastoCentavos]
+      additionalProperties: false
+      properties:
+        categoriaId:
+          type: string
+        nombre:
+          type: string
+        color:
+          type: string
+          pattern: '^#[0-9A-Fa-f]{6}$'
+        gastoCentavos:
+          type: integer
+          minimum: 0
+    PuntoEvolucion:
+      type: object
+      required: [mes, ingresosCentavos, gastosCentavos]
+      additionalProperties: false
+      properties:
+        mes:
+          $ref: '#/components/schemas/Mes'
+        ingresosCentavos:
+          type: integer
+          minimum: 0
+        gastosCentavos:
+          type: integer
+          minimum: 0
+    Resumen:
+      type: object
+      required: [mes, ingresosCentavos, gastosCentavos, saldoCentavos, porCategoria, evolucion]
+      additionalProperties: false
+      properties:
+        mes:
+          $ref: '#/components/schemas/Mes'
+        ingresosCentavos:
+          type: integer
+          minimum: 0
+        gastosCentavos:
+          type: integer
+          minimum: 0
+        saldoCentavos:
+          type: integer
+        porCategoria:
+          type: array
+          items:
+            $ref: '#/components/schemas/GastoPorCategoria'
+        evolucion:
+          type: array
+          items:
+            $ref: '#/components/schemas/PuntoEvolucion'
+        presupuesto:
+          oneOf:
+            - $ref: '#/components/schemas/Presupuesto'
+            - type: 'null'
+    RegistrarComprobante:
+      type: object
+      required: [pathname]
+      additionalProperties: false
+      properties:
+        pathname:
+          type: string
+          minLength: 1
+          maxLength: 512
+  responses:
+    ErrorValidacion:
+      description: Datos inválidos
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ErrorNoAutenticado:
+      description: Se requiere iniciar sesión
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ErrorProhibido:
+      description: Sin permiso
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ErrorNoEncontrado:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ErrorConflicto:
+      description: Conflicto de negocio
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ErrorTipoNoSoportado:
+      description: Tipo de archivo no permitido
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

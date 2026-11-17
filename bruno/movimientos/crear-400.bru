@@ -1,0 +1,27 @@
+meta {
+  name: Crear movimiento (400)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/movimientos
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Origin: http://localhost:5173
+}
+
+body:json {
+  {
+    "tipo": "gasto",
+    "montoCentavos": 0,
+    "categoriaId": "{{categoriaId}}",
+    "nota": null,
+    "fecha": "2026-11-10",
+    "comprobanteUrl": null
+  }
+}

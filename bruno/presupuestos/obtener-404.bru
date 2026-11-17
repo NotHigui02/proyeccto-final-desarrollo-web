@@ -1,0 +1,15 @@
+meta {
+  name: Obtener presupuesto (404)
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/presupuestos/2099-01
+  body: none
+  auth: inherit
+}
+
+docs {
+  Si el mes no tiene presupuesto guardado la API responde 404.
+}

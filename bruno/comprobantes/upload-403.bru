@@ -1,0 +1,27 @@
+meta {
+  name: Upload pathname ajeno (403)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/comprobantes/upload
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Origin: http://localhost:5173
+}
+
+body:json {
+  {
+    "type": "blob.generate-client-token",
+    "payload": {
+      "pathname": "usuarios/otro-uid/comprobantes/a.pdf",
+      "multipart": false,
+      "clientPayload": null
+    }
+  }
+}

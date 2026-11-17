@@ -1,0 +1,22 @@
+{
+  "name": "@gastos/shared",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Esquemas Zod y utilidades puras compartidas por la API y la web.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "^4.6.6"
+  }
+}

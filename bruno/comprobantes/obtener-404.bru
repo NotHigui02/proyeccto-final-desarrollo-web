@@ -1,0 +1,11 @@
+meta {
+  name: Obtener comprobante (404)
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/movimientos/no-existe/comprobante
+  body: none
+  auth: inherit
+}

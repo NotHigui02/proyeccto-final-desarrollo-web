@@ -1,0 +1,23 @@
+meta {
+  name: Actualizar categoría (404)
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{baseUrl}}/api/categorias/no-existe
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Origin: http://localhost:5173
+}
+
+body:json {
+  {
+    "nombre": "X",
+    "color": "#0B5D4B"
+  }
+}

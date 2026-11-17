@@ -1,0 +1,22 @@
+meta {
+  name: Guardar presupuesto (401)
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{baseUrl}}/api/presupuestos/{{mes}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Origin: http://localhost:5173
+}
+
+body:json {
+  {
+    "montoCentavos": 5000000
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Shell(npm run *)",
+      "Shell(git status)",
+      "Shell(git diff)",
+      "Shell(git log)",
+      "Shell(ls)"
+    ],
+    "deny": [
+      "Read(**/.env)",
+      "Read(**/.env.local)",
+      "Read(**/.env.*.local)",
+      "Read(**/.env.production)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/*service-account*.json)",
+      "Read(**/*firebase-adminsdk*.json)",
+      "Write(**/.env)",
+      "Write(**/.env.local)",
+      "Write(**/*.pem)",
+      "Write(**/*.key)",
+      "Shell(printenv)",
+      "Shell(sudo)"
+    ]
+  }
+}

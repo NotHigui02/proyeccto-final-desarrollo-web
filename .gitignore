@@ -1,0 +1,29 @@
+# Dependencias y artefactos
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.vite/
+
+# Secretos: NUNCA en Git
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*service-account*.json
+*firebase-adminsdk*.json
+credentials*.json
+
+# Vercel / Firebase locales
+.vercel/
+.firebase/
+firebase-debug.log
+
+# Sistema y editores
+.DS_Store
+*.log
+npm-debug.log*
+.idea/
