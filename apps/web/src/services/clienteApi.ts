@@ -1,8 +1,14 @@
 import {
   categoriaSchema,
+  movimientoSchema,
   resumenSchema,
   type Categoria,
   type CategoriaEntrada,
+  type FiltrosMovimientos,
+  type Movimiento,
+  type MovimientoEntrada,
+  type Pagina,
+  type Paginacion,
   type Resumen,
 } from '@gastos/shared';
 import { z } from 'zod';
@@ -20,6 +26,11 @@ export class ErrorApi extends Error {
 
 const listaCategoriasSchema = z.strictObject({
   items: z.array(categoriaSchema),
+});
+
+const paginaMovimientosSchema = z.strictObject({
+  items: z.array(movimientoSchema),
+  siguienteCursor: z.string().nullable(),
 });
 
 async function leerError(respuesta: Response): Promise<ErrorApi> {
@@ -80,6 +91,50 @@ export function actualizarCategoria(id: string, entrada: CategoriaEntrada): Prom
 
 export async function eliminarCategoria(id: string): Promise<void> {
   const respuesta = await fetch(`/api/categorias/${encodeURIComponent(id)}`, {
+    method: 'DELETE',
+    headers: { Accept: 'application/json' },
+  });
+  if (!respuesta.ok) throw await leerError(respuesta);
+}
+
+export function listarMovimientos(
+  filtros: FiltrosMovimientos = {},
+  paginacion: Paginacion = { limite: 20 },
+  señal?: AbortSignal,
+): Promise<Pagina<Movimiento>> {
+  const params = new URLSearchParams();
+  if (filtros.mes) params.set('mes', filtros.mes);
+  if (filtros.tipo) params.set('tipo', filtros.tipo);
+  if (filtros.categoriaId) params.set('categoriaId', filtros.categoriaId);
+  params.set('limite', String(paginacion.limite));
+  if (paginacion.cursor) params.set('cursor', paginacion.cursor);
+  return pedirJson(`/api/movimientos?${params.toString()}`, paginaMovimientosSchema, {
+    signal: señal,
+  });
+}
+
+export function obtenerMovimiento(id: string, señal?: AbortSignal): Promise<Movimiento> {
+  return pedirJson(`/api/movimientos/${encodeURIComponent(id)}`, movimientoSchema, {
+    signal: señal,
+  });
+}
+
+export function crearMovimiento(entrada: MovimientoEntrada): Promise<Movimiento> {
+  return pedirJson('/api/movimientos', movimientoSchema, {
+    method: 'POST',
+    body: JSON.stringify(entrada),
+  });
+}
+
+export function actualizarMovimiento(id: string, entrada: MovimientoEntrada): Promise<Movimiento> {
+  return pedirJson(`/api/movimientos/${encodeURIComponent(id)}`, movimientoSchema, {
+    method: 'PUT',
+    body: JSON.stringify(entrada),
+  });
+}
+
+export async function eliminarMovimiento(id: string): Promise<void> {
+  const respuesta = await fetch(`/api/movimientos/${encodeURIComponent(id)}`, {
     method: 'DELETE',
     headers: { Accept: 'application/json' },
   });

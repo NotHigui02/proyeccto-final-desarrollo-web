@@ -1,6 +1,6 @@
 # 06 · Movimientos
 
-**Estado:** Pendiente · **Hito:** 2–3 · **Enunciado:** RF-01, §8, §9.2, §9.4, §11
+**Estado:** Hecho · **Hito:** 2–3 · **Enunciado:** RF-01, §8, §9.2, §9.4, §11
 
 ## Objetivo
 
@@ -33,10 +33,10 @@ CRUD de ingresos y gastos con lista filtrable y paginada por cursor.
 
 ## Tareas
 
-- [ ] Casos de uso + pruebas (monto 0/negativo, fecha futura, categoría ajena → 404).
-- [ ] Rutas + pruebas (`400` monto 0 — §11, `401`, `404`).
-- [ ] Prueba de integración ruta → caso de uso → repositorio simulado (§11).
-- [ ] Páginas, formulario y lista + pruebas RTL.
+- [x] Casos de uso + pruebas (monto 0/negativo, fecha futura, categoría ajena → 404).
+- [x] Rutas + pruebas (`400` monto 0 — §11, `401`, `404`).
+- [x] Prueba de integración ruta → caso de uso → repositorio simulado (§11).
+- [x] Páginas, formulario y lista + pruebas RTL.
 
 ## Definición de terminado
 

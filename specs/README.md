@@ -12,7 +12,7 @@ y se implementa en orden. Al terminar un spec: `npm run check`, actualizar su es
 | 03  | [Resumen y gráficos con datos de ejemplo](03-resumen-y-graficos.md)  | RF-02, RF-03, RF-05, §5, §6, CA-2, CA-3   | 1    | Hecho     |
 | 04  | [Base de la API REST](04-api-base.md)                                | §9.2, §9.6 (cabeceras, CORS, límites)     | 3    | Hecho     |
 | 05  | [Categorías](05-categorias.md)                                       | RF-01 (categorías), §8                    | 2–3  | Hecho     |
-| 06  | [Movimientos](06-movimientos.md)                                     | RF-01 (movimientos), §8, lista con cursor | 2–3  | Pendiente |
+| 06  | [Movimientos](06-movimientos.md)                                     | RF-01 (movimientos), §8, lista con cursor | 2–3  | Hecho     |
 | 07  | [Resumen desde la API](07-resumen-api.md)                            | `GET /api/resumen`, RF-02, RF-03          | 3    | Pendiente |
 | 08  | [Presupuesto mensual](08-presupuesto.md)                             | RF-04, CA-4                               | 2–3  | Pendiente |
 | 09  | [Exportar a CSV](09-exportar-csv.md)                                 | RF-06                                     | 3    | Pendiente |
