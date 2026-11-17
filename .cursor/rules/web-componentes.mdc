@@ -1,0 +1,31 @@
+---
+description: Arquitectura por componentes, accesibilidad y estilos del frontend React
+globs: apps/web/**
+alwaysApply: false
+---
+
+# Web · React por componentes
+
+## Organización
+- `components/<grupo>/<Componente>.tsx` + `<Componente>.module.css` (+ prueba en `tests/`). Grupos: `layout`,
+  `ui` (botones, campos, diálogos, estados), `charts` (gráficos SVG), `forms`.
+- `pages/`: una página por ruta; compone componentes y hooks, no contiene estilos complejos ni fetch directo.
+- `services/`: cliente HTTP hacia `/api` (mismo origen). Los componentes no llaman `fetch` directamente.
+- `hooks/`: lógica reutilizable (`useDebounce`, `useResumenMes`, `useTamanoContenedor`).
+- `context/`: estado compartido mínimo (mes seleccionado, sesión).
+- Componentes pequeños con una sola responsabilidad; props tipadas; dependencias inyectadas por props o
+  contexto para poder probarlos.
+
+## Accesibilidad (WCAG 2.2 AA)
+- Landmarks, un solo `<h1>` por página, títulos sin saltos y `<title>` por ruta.
+- `<button>` para acciones, `<a>`/`<Link>` para navegar. Nunca `<div onClick>`.
+- Formularios con `<label>`, errores junto al campo con `aria-describedby` y anunciados con `aria-live`.
+- Foco visible siempre; diálogos con `<dialog>` que atrapan y devuelven el foco.
+- No transmitir información solo con color; contraste ≥ 4,5:1 (texto) y ≥ 3:1 (gráficos).
+
+## Estilos
+- Mobile-first, CSS Modules y variables de `styles/global.css`; `rem`, `clamp()`, Grid/Flexbox, sin anchos
+  fijos en px. Objetivos táctiles ≥ 44px. Respetar `prefers-color-scheme` y `prefers-reduced-motion`.
+
+## Pruebas
+- React Testing Library consultando por rol y etiqueta (`getByRole`, `getByLabelText`), nunca por clases.

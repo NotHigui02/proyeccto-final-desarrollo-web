@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeReadFile": [
+      {
+        "command": "node .cursor/hooks/proteger-archivos.mjs",
+        "timeout": 10,
+        "failClosed": true
+      }
+    ],
+    "preToolUse": [
+      {
+        "command": "node .cursor/hooks/proteger-archivos.mjs",
+        "timeout": 10,
+        "failClosed": true
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": "node .cursor/hooks/proteger-shell.mjs",
+        "timeout": 10,
+        "failClosed": true
+      }
+    ],
+    "postToolUse": [
+      {
+        "command": "node .cursor/hooks/calidad-post-edicion.mjs",
+        "timeout": 60
+      }
+    ]
+  }
+}

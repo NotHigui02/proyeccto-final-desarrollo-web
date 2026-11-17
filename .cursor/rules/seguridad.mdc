@@ -1,0 +1,22 @@
+---
+description: Restricciones de seguridad para la IA y para el código
+alwaysApply: true
+---
+
+# Seguridad
+
+Estas reglas además se **aplican con hooks** (`.cursor/hooks.json`). Si un hook bloquea una acción, no
+intentes rodearlo (otro comando, otra ruta, codificación): explica al usuario qué necesitas.
+
+## La IA
+- No leer ni crear `.env*` (salvo `.env.example`), `*.pem`, `*.key`, cuentas de servicio ni credenciales.
+- No salir de la carpeta del proyecto.
+- Acciones con efecto fuera de la máquina (push, deploy, instalar paquetes, red) requieren permiso.
+
+## El código
+- Secretos solo en variables de entorno del servidor; en `VITE_*` solo la configuración web pública de Firebase.
+- Nunca registrar en logs tokens, cookies, contraseñas ni datos personales.
+- Cada ruta privada verifica sesión y autorización por objeto; el `uid` sale de la sesión.
+- Zod estricto en toda entrada; contenido de usuarios escapado; nada de `dangerouslySetInnerHTML`.
+- Cookie de sesión `HttpOnly; Secure; SameSite=Lax` y comprobación de `Origin` en peticiones que modifican.
+- Reglas de Firestore `allow read, write: if false`; solo el Admin SDK accede a datos.

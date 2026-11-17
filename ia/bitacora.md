@@ -1,0 +1,9 @@
+# Bitácora de IA
+
+Registro de cada uso relevante de IA en el proyecto. Columnas: **propósito** (qué se pidió y por qué),
+**evidencia** (archivos o commits resultantes), **validación** (cómo se comprobó) y **decisión** (qué se
+aceptó, cambió o descartó y por qué).
+
+| Fecha      | Herramienta     | Propósito                                                                                                                                               | Evidencia                                                                     | Validación                                                                             | Decisión                                                                                                                                                                                |
+| ---------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-11-17 | Cursor (agente) | Configurar el monorepo (Fastify hexagonal + React/Vite + shared con Zod), la calidad automática y la configuración de IA; crear los specs del proyecto. | Primer commit: `AGENTS.md`, `.cursor/`, `ia/`, `specs/`, `apps/`, `packages/` | `npm run test:ia` (hooks y política), `npm run check` (formato, lint, tipos y pruebas) | Se adopta. Se cambia Next.js por Fastify + React/Vite según decisión del estudiante (spec 00). `.cursorignore` lo crea el estudiante porque Cursor no permite que el agente lo escriba. |

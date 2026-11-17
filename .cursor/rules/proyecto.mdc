@@ -1,0 +1,14 @@
+---
+description: Reglas generales del proyecto Gastos con gráficos
+alwaysApply: true
+---
+
+# Proyecto 05 · Gastos con gráficos
+
+- Lee y sigue `AGENTS.md` (stack, comandos, estructura y prohibiciones). Es la fuente principal.
+- Trabajamos por specs locales en `specs/`: antes de implementar, identifica el spec y sus criterios de
+  aceptación; al terminar, marca las tareas completadas y actualiza el estado.
+- Este es un proyecto personal: NO uses los flujos `/sdd`, `/sdd-build` ni `/sdd-test`.
+- Respuestas y código en español. Cambios pequeños, verificables y con pruebas.
+- Antes de cerrar una tarea ejecuta `npm run check` y reporta el resultado real.
+- Registra el trabajo de la IA en `ia/bitacora.md`.

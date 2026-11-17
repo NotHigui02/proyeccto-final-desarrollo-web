@@ -1,0 +1,14 @@
+---
+description: Cómo leer y mantener los specs locales del proyecto
+globs: specs/**
+alwaysApply: false
+---
+
+# Specs locales
+
+- Cada spec tiene: objetivo, requisitos trazados al enunciado (RF, CA, secciones), diseño, tareas con
+  casillas, pruebas y definición de terminado.
+- Al implementar, marca `- [x]` las tareas completadas y cambia el `Estado` del encabezado
+  (`Pendiente` → `En progreso` → `Hecho`). Actualiza la tabla de `specs/README.md`.
+- No inventes reglas de negocio: si falta información, añádela como "Pregunta abierta" en el spec y
+  consulta al usuario.

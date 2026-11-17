@@ -1,0 +1,23 @@
+{
+  "name": "@gastos/api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "API REST de gastos con Fastify (arquitectura hexagonal).",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@gastos/shared": "0.1.0",
+    "fastify": "^5.6.0",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.0",
+    "tsx": "^4.20.5"
+  }
+}

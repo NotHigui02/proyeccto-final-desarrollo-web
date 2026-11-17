@@ -1,0 +1,53 @@
+{
+  "name": "gastos-con-graficos",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Control de gastos con gráficos dibujados a mano (proyecto 05). API Fastify hexagonal + React.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build:shared": "npm run build -w @gastos/shared",
+    "dev": "npm run build:shared && concurrently -n shared,api,web -c gray,blue,magenta \"npm run dev -w @gastos/shared\" \"npm run dev -w @gastos/api\" \"npm run dev -w @gastos/web\"",
+    "dev:api": "npm run build:shared && npm run dev -w @gastos/api",
+    "dev:web": "npm run build:shared && npm run dev -w @gastos/web",
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run build:shared && npm run typecheck --workspaces --if-present",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "npm run build:shared && npm run test --workspaces --if-present",
+    "test:ia": "node --test \"ia/pruebas/*.test.mjs\"",
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run test:ia",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,mjs}": [
+      "eslint --max-warnings 0 --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css,html,yml,yaml}": "prettier --write"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.35.0",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.35.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.6",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.43.0",
+    "vitest": "^5.1.0"
+  }
+}

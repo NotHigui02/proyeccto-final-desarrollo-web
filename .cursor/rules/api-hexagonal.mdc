@@ -1,0 +1,33 @@
+---
+description: Arquitectura hexagonal y convenciones de la API Fastify
+globs: apps/api/**
+alwaysApply: false
+---
+
+# API · Fastify hexagonal
+
+## Capas y dependencias (de afuera hacia adentro)
+`infrastructure` → `application` → `domain`. Nunca al revés (ESLint lo bloquea).
+
+- `domain/`: entidades, value objects (`Dinero`, `Mes`, `FechaMovimiento`), reglas puras y errores
+  (`ErrorValidacion`, `ErrorNoEncontrado`, `ErrorConflicto`, …). Sin imports de frameworks.
+- `application/ports/`: interfaces que la aplicación necesita (`RepositorioMovimientos`, `Reloj`,
+  `VerificadorSesion`, `AlmacenArchivos`). Nombradas por lo que hacen, no por la tecnología.
+- `application/use-cases/`: una clase por caso de uso con un método `ejecutar(entrada)`. Recibe puertos por
+  constructor. Contiene las reglas de negocio (p. ej. "no se borra una categoría con movimientos").
+- `infrastructure/`: adaptadores (Firestore, Firebase Auth, Vercel Blob, Fastify). Un adaptador implementa un
+  puerto con `implements`.
+- `container.ts`: raíz de composición; único lugar que hace `new` de adaptadores.
+
+## HTTP
+- Rutas como plugins (`FastifyPluginCallback`/`FastifyPluginAsync`) con prefijo `/api`, reciben casos de uso
+  por opciones. La ruta solo: autentica, valida con el esquema de `@gastos/shared`, llama al caso de uso y
+  responde. Sin lógica de negocio en la ruta.
+- Errores: lanza errores de dominio; `infrastructure/http/manejo-errores.ts` los traduce a HTTP.
+- Listas con cursor: `?limite=20&cursor=<id>` → `{ items, siguienteCursor }` (`limite` ≤ 100).
+- Respuestas privadas con `Cache-Control: no-store` (ya aplicado globalmente).
+
+## Pruebas
+- Casos de uso: con dobles en memoria de los puertos (sin `vi.mock` de Firebase).
+- Rutas: `construirApp(entorno, dependencias)` + `app.inject(...)` con dependencias falsas.
+- Cubrir siempre 400, 401 y 403/404 en cada ruta principal.
