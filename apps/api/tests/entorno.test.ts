@@ -18,8 +18,10 @@ describe('cargarEntorno', () => {
       FIREBASE_PROJECT_ID: 'demo',
       FIREBASE_CLIENT_EMAIL: 'demo@demo.iam.gserviceaccount.com',
       FIREBASE_PRIVATE_KEY: '-----BEGIN PRIVATE KEY-----\\nABC\\n-----END PRIVATE KEY-----\\n',
+      BLOB_READ_WRITE_TOKEN: 'vercel_blob_rw_test_token',
     });
     expect(entorno.FIREBASE_PROJECT_ID).toBe('demo');
+    expect(entorno.BLOB_READ_WRITE_TOKEN).toBe('vercel_blob_rw_test_token');
     expect(clavePrivadaFirebase(entorno.FIREBASE_PRIVATE_KEY ?? '')).toContain('\nABC\n');
   });
 });

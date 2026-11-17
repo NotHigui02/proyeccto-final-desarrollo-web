@@ -3,6 +3,7 @@ import { CrearMovimiento } from '../src/application/use-cases/crear-movimiento.j
 import { EliminarMovimiento } from '../src/application/use-cases/eliminar-movimiento.js';
 import { ListarMovimientos } from '../src/application/use-cases/listar-movimientos.js';
 import { ErrorNoEncontrado } from '../src/domain/errors/errores-dominio.js';
+import { AlmacenArchivosMemoria } from '../src/infrastructure/memoria/almacen-archivos-memoria.js';
 import { RepositorioCategoriasMemoria } from '../src/infrastructure/memoria/repositorio-categorias-memoria.js';
 import { RepositorioMovimientosMemoria } from '../src/infrastructure/memoria/repositorio-movimientos-memoria.js';
 import { UID_DEMO } from '../src/infrastructure/memoria/semilla.js';
@@ -69,7 +70,10 @@ describe('casos de uso de movimientos', () => {
 
   it('elimina un movimiento existente', async () => {
     const movimientos = new RepositorioMovimientosMemoria([{ id: 'm1', ...entradaValida }]);
-    await new EliminarMovimiento(movimientos).ejecutar(UID_DEMO, 'm1');
+    await new EliminarMovimiento(movimientos, new AlmacenArchivosMemoria()).ejecutar(
+      UID_DEMO,
+      'm1',
+    );
     expect(await movimientos.obtener(UID_DEMO, 'm1')).toBeNull();
   });
 });

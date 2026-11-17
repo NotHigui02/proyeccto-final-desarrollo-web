@@ -20,8 +20,10 @@ function mapearMovimiento(id: string, datos: DocumentData): Movimiento {
     categoriaId: String(datos.categoriaId),
     nota: datos.nota === null || datos.nota === undefined ? null : String(datos.nota),
     fecha: String(datos.fecha),
-    // Hasta el spec de comprobantes solo se admite null.
-    comprobanteUrl: null,
+    comprobanteUrl:
+      typeof datos.comprobanteUrl === 'string' && datos.comprobanteUrl.length > 0
+        ? datos.comprobanteUrl
+        : null,
   };
 }
 
@@ -104,8 +106,23 @@ export class RepositorioMovimientosFirestore implements RepositorioMovimientos {
     if (!actual.exists) {
       throw new ErrorNoEncontrado('Movimiento no encontrado');
     }
-    await ref.set(datosEntrada(entrada));
-    return { id, ...entrada };
+    const previo = mapearMovimiento(id, actual.data() ?? {});
+    const datos = {
+      ...datosEntrada(entrada),
+      comprobanteUrl: previo.comprobanteUrl,
+    };
+    await ref.set(datos);
+    return { id, ...entrada, comprobanteUrl: previo.comprobanteUrl };
+  }
+
+  async guardarComprobanteUrl(uid: string, id: string, url: string | null): Promise<Movimiento> {
+    const ref = coleccionMovimientos(this.db, uid).doc(id);
+    const actual = await ref.get();
+    if (!actual.exists) {
+      throw new ErrorNoEncontrado('Movimiento no encontrado');
+    }
+    await ref.update({ comprobanteUrl: url });
+    return { ...mapearMovimiento(id, actual.data() ?? {}), comprobanteUrl: url };
   }
 
   async eliminar(uid: string, id: string): Promise<void> {

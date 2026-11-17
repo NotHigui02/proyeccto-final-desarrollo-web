@@ -17,6 +17,7 @@ const ESTADO_POR_CODIGO: Record<CodigoError, number> = {
   PROHIBIDO: 403,
   NO_ENCONTRADO: 404,
   CONFLICTO: 409,
+  TIPO_NO_SOPORTADO: 415,
 };
 
 function esErrorHttpCliente(error: unknown): error is { statusCode: number; message: string } {

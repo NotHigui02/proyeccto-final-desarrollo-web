@@ -1,29 +1,35 @@
 import type { UsuarioSesion } from '@gastos/shared';
 import { construirApp, type Dependencias } from '../src/app.js';
+import type { AlmacenArchivos } from '../src/application/ports/almacen-archivos.js';
 import type { LimitadorFrecuencia } from '../src/application/ports/limitador-frecuencia.js';
 import type { Reloj } from '../src/application/ports/reloj.js';
 import type { RequerirUsuario } from '../src/application/ports/requerir-usuario.js';
 import type { VerificadorSesion } from '../src/application/ports/verificador-sesion.js';
 import { ActualizarCategoria } from '../src/application/use-cases/actualizar-categoria.js';
 import { ActualizarMovimiento } from '../src/application/use-cases/actualizar-movimiento.js';
+import { AutorizarSubidaComprobante } from '../src/application/use-cases/autorizar-subida-comprobante.js';
 import { CerrarSesion } from '../src/application/use-cases/cerrar-sesion.js';
 import { CrearCategoria } from '../src/application/use-cases/crear-categoria.js';
 import { CrearMovimiento } from '../src/application/use-cases/crear-movimiento.js';
 import { CrearSesion } from '../src/application/use-cases/crear-sesion.js';
 import { EliminarCategoria } from '../src/application/use-cases/eliminar-categoria.js';
+import { EliminarComprobante } from '../src/application/use-cases/eliminar-comprobante.js';
 import { EliminarMovimiento } from '../src/application/use-cases/eliminar-movimiento.js';
 import { ExportarMovimientosMes } from '../src/application/use-cases/exportar-movimientos-mes.js';
 import { GuardarPresupuesto } from '../src/application/use-cases/guardar-presupuesto.js';
 import { ListarCategorias } from '../src/application/use-cases/listar-categorias.js';
 import { ListarMovimientos } from '../src/application/use-cases/listar-movimientos.js';
+import { ObtenerComprobante } from '../src/application/use-cases/obtener-comprobante.js';
 import { ObtenerEstadoSalud } from '../src/application/use-cases/obtener-estado-salud.js';
 import { ObtenerMovimiento } from '../src/application/use-cases/obtener-movimiento.js';
 import { ObtenerPresupuesto } from '../src/application/use-cases/obtener-presupuesto.js';
 import { ObtenerResumenMes } from '../src/application/use-cases/obtener-resumen-mes.js';
 import { ObtenerUsuarioActual } from '../src/application/use-cases/obtener-usuario-actual.js';
+import { RegistrarComprobante } from '../src/application/use-cases/registrar-comprobante.js';
 import { RequerirUsuario as CasoRequerirUsuario } from '../src/application/use-cases/requerir-usuario.js';
 import { VerificadorSesionMemoria } from '../src/infrastructure/auth/verificador-sesion-memoria.js';
 import { cargarEntorno } from '../src/infrastructure/config/entorno.js';
+import { AlmacenArchivosMemoria } from '../src/infrastructure/memoria/almacen-archivos-memoria.js';
 import { RepositorioCategoriasMemoria } from '../src/infrastructure/memoria/repositorio-categorias-memoria.js';
 import { LimitadorMemoria } from '../src/infrastructure/memoria/limitador-memoria.js';
 import { RepositorioMovimientosMemoria } from '../src/infrastructure/memoria/repositorio-movimientos-memoria.js';
@@ -45,6 +51,7 @@ export function crearDependenciasPrueba(
     categorias?: RepositorioCategoriasMemoria;
     movimientos?: RepositorioMovimientosMemoria;
     presupuestos?: RepositorioPresupuestosMemoria;
+    almacen?: AlmacenArchivos;
     requerirUsuario?: RequerirUsuario;
     verificador?: VerificadorSesion;
     reloj?: Reloj;
@@ -53,6 +60,7 @@ export function crearDependenciasPrueba(
   const categorias = opciones?.categorias ?? new RepositorioCategoriasMemoria();
   const movimientos = opciones?.movimientos ?? new RepositorioMovimientosMemoria();
   const presupuestos = opciones?.presupuestos ?? new RepositorioPresupuestosMemoria();
+  const almacen = opciones?.almacen ?? new AlmacenArchivosMemoria();
   const reloj = opciones?.reloj ?? relojFijo;
   const verificador = opciones?.verificador ?? new VerificadorSesionMemoria();
   if (verificador instanceof VerificadorSesionMemoria) {
@@ -80,10 +88,14 @@ export function crearDependenciasPrueba(
     obtenerMovimiento: new ObtenerMovimiento(movimientos),
     crearMovimiento: new CrearMovimiento(movimientos, categorias, reloj),
     actualizarMovimiento: new ActualizarMovimiento(movimientos, categorias, reloj),
-    eliminarMovimiento: new EliminarMovimiento(movimientos),
+    eliminarMovimiento: new EliminarMovimiento(movimientos, almacen),
     exportarMovimientosMes: new ExportarMovimientosMes(categorias, movimientos),
     obtenerPresupuesto: new ObtenerPresupuesto(presupuestos),
     guardarPresupuesto: new GuardarPresupuesto(presupuestos),
+    autorizarSubidaComprobante: new AutorizarSubidaComprobante(almacen),
+    registrarComprobante: new RegistrarComprobante(movimientos, almacen),
+    obtenerComprobante: new ObtenerComprobante(movimientos, almacen),
+    eliminarComprobante: new EliminarComprobante(movimientos, almacen),
     limitadorFrecuencia: limitador ?? new LimitadorMemoria(1000, 60_000),
   };
 }

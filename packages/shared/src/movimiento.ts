@@ -5,6 +5,7 @@ import { mesSchema } from './mes.js';
 
 export const tipoMovimientoSchema = z.enum(['ingreso', 'gasto']);
 
+/** Entrada de creación/edición: el cliente no puede fijar una URL de comprobante. */
 export function crearMovimientoEntradaSchema(hoy?: Reloj) {
   return z.strictObject({
     tipo: tipoMovimientoSchema,
@@ -18,8 +19,14 @@ export function crearMovimientoEntradaSchema(hoy?: Reloj) {
 
 export const movimientoEntradaSchema = crearMovimientoEntradaSchema();
 
-export const movimientoSchema = movimientoEntradaSchema.extend({
+export const movimientoSchema = z.strictObject({
   id: z.string().min(1),
+  tipo: tipoMovimientoSchema,
+  montoCentavos: montoCentavosSchema,
+  categoriaId: z.string().min(1),
+  nota: z.string().max(200).nullable(),
+  fecha: fechaMovimientoSchema,
+  comprobanteUrl: z.url().nullable(),
 });
 
 export const filtrosMovimientosSchema = z.strictObject({

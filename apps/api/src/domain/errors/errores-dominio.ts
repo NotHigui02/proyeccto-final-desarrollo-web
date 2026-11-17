@@ -1,5 +1,10 @@
 export type CodigoError =
-  'VALIDACION' | 'NO_AUTENTICADO' | 'PROHIBIDO' | 'NO_ENCONTRADO' | 'CONFLICTO';
+  | 'VALIDACION'
+  | 'NO_AUTENTICADO'
+  | 'PROHIBIDO'
+  | 'NO_ENCONTRADO'
+  | 'CONFLICTO'
+  | 'TIPO_NO_SOPORTADO';
 
 export interface DetalleError {
   campo: string;
@@ -44,5 +49,11 @@ export class ErrorNoEncontrado extends ErrorDominio {
 export class ErrorConflicto extends ErrorDominio {
   constructor(mensaje: string) {
     super('CONFLICTO', mensaje);
+  }
+}
+
+export class ErrorTipoNoSoportado extends ErrorDominio {
+  constructor(mensaje = 'Tipo de archivo no permitido') {
+    super('TIPO_NO_SOPORTADO', mensaje);
   }
 }

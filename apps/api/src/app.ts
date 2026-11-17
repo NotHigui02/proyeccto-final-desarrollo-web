@@ -4,25 +4,30 @@ import type { LimitadorFrecuencia } from './application/ports/limitador-frecuenc
 import type { RequerirUsuario } from './application/ports/requerir-usuario.js';
 import type { ActualizarCategoria } from './application/use-cases/actualizar-categoria.js';
 import type { ActualizarMovimiento } from './application/use-cases/actualizar-movimiento.js';
+import type { AutorizarSubidaComprobante } from './application/use-cases/autorizar-subida-comprobante.js';
 import type { CerrarSesion } from './application/use-cases/cerrar-sesion.js';
 import type { CrearCategoria } from './application/use-cases/crear-categoria.js';
 import type { CrearMovimiento } from './application/use-cases/crear-movimiento.js';
 import type { CrearSesion } from './application/use-cases/crear-sesion.js';
 import type { EliminarCategoria } from './application/use-cases/eliminar-categoria.js';
+import type { EliminarComprobante } from './application/use-cases/eliminar-comprobante.js';
 import type { EliminarMovimiento } from './application/use-cases/eliminar-movimiento.js';
 import type { ExportarMovimientosMes } from './application/use-cases/exportar-movimientos-mes.js';
 import type { GuardarPresupuesto } from './application/use-cases/guardar-presupuesto.js';
 import type { ListarCategorias } from './application/use-cases/listar-categorias.js';
 import type { ListarMovimientos } from './application/use-cases/listar-movimientos.js';
+import type { ObtenerComprobante } from './application/use-cases/obtener-comprobante.js';
 import type { ObtenerEstadoSalud } from './application/use-cases/obtener-estado-salud.js';
 import type { ObtenerMovimiento } from './application/use-cases/obtener-movimiento.js';
 import type { ObtenerPresupuesto } from './application/use-cases/obtener-presupuesto.js';
 import type { ObtenerResumenMes } from './application/use-cases/obtener-resumen-mes.js';
 import type { ObtenerUsuarioActual } from './application/use-cases/obtener-usuario-actual.js';
+import type { RegistrarComprobante } from './application/use-cases/registrar-comprobante.js';
 import type { Entorno } from './infrastructure/config/entorno.js';
 import { registrarManejoErrores } from './infrastructure/http/manejo-errores.js';
 import { rutasAuth } from './infrastructure/http/routes/auth.rutas.js';
 import { rutasCategorias } from './infrastructure/http/routes/categorias.rutas.js';
+import { rutasComprobantes } from './infrastructure/http/routes/comprobantes.rutas.js';
 import { rutasMovimientos } from './infrastructure/http/routes/movimientos.rutas.js';
 import { rutasPresupuestos } from './infrastructure/http/routes/presupuestos.rutas.js';
 import { rutasResumen } from './infrastructure/http/routes/resumen.rutas.js';
@@ -50,6 +55,10 @@ export interface Dependencias {
   exportarMovimientosMes: ExportarMovimientosMes;
   obtenerPresupuesto: ObtenerPresupuesto;
   guardarPresupuesto: GuardarPresupuesto;
+  autorizarSubidaComprobante: AutorizarSubidaComprobante;
+  registrarComprobante: RegistrarComprobante;
+  obtenerComprobante: ObtenerComprobante;
+  eliminarComprobante: EliminarComprobante;
   limitadorFrecuencia: LimitadorFrecuencia;
 }
 
@@ -117,6 +126,14 @@ export function construirApp(entorno: Entorno, dependencias: Dependencias): Fast
     actualizarMovimiento: dependencias.actualizarMovimiento,
     eliminarMovimiento: dependencias.eliminarMovimiento,
     exportarMovimientosMes: dependencias.exportarMovimientosMes,
+  });
+  void app.register(rutasComprobantes, {
+    prefix: '/api',
+    requerirUsuario: dependencias.requerirUsuario,
+    autorizarSubidaComprobante: dependencias.autorizarSubidaComprobante,
+    registrarComprobante: dependencias.registrarComprobante,
+    obtenerComprobante: dependencias.obtenerComprobante,
+    eliminarComprobante: dependencias.eliminarComprobante,
   });
   void app.register(rutasPresupuestos, {
     prefix: '/api',

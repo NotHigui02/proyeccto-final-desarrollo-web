@@ -18,7 +18,7 @@ y se implementa en orden. Al terminar un spec: `npm run check`, actualizar su es
 | 09  | [Exportar a CSV](09-exportar-csv.md)                                 | RF-06                                     | 3    | Hecho     |
 | 10  | [Persistencia en Firestore](10-persistencia-firestore.md)            | §9.3, §9.4                                | 3    | Hecho     |
 | 11  | [Autenticación y sesión](11-autenticacion.md)                        | §9.1, roles, CSRF                         | 4    | Hecho     |
-| 12  | [Comprobantes con Vercel Blob](12-comprobantes-blob.md)              | §9.5                                      | 4    | Pendiente |
+| 12  | [Comprobantes con Vercel Blob](12-comprobantes-blob.md)              | §9.5                                      | 4    | Hecho     |
 | 13  | [OpenAPI y colección Bruno](13-openapi-y-bruno.md)                   | §9.7                                      | 3    | Pendiente |
 | 14  | [Calidad, accesibilidad y despliegue](14-calidad-y-despliegue.md)    | §4, §11, §14, §16, despliegue Vercel      | 4    | Pendiente |
 

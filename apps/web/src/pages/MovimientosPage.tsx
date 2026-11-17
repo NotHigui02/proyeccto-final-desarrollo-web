@@ -9,6 +9,7 @@ import {
 } from '@gastos/shared';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { FormularioMovimiento } from '../components/forms/FormularioMovimiento';
+import { SubidaComprobante } from '../components/forms/SubidaComprobante';
 import { BotonExportarCsv } from '../components/ui/BotonExportarCsv';
 import { EstadoCarga } from '../components/ui/EstadoCarga';
 import { EstadoError } from '../components/ui/EstadoError';
@@ -287,6 +288,18 @@ export function MovimientosPage() {
               }}
               textoEnvio="Guardar cambios"
               onEnviar={manejarActualizar}
+            />
+            <SubidaComprobante
+              movimientoId={editando.id}
+              comprobanteUrl={editando.comprobanteUrl}
+              onCambio={(url) => {
+                setEditando({ ...editando, comprobanteUrl: url });
+                setItems((previos) =>
+                  previos.map((item) =>
+                    item.id === editando.id ? { ...item, comprobanteUrl: url } : item,
+                  ),
+                );
+              }}
             />
             <button
               type="button"

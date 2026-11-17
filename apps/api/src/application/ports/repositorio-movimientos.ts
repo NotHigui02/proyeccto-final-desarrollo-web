@@ -16,6 +16,7 @@ export interface RepositorioMovimientos {
   obtener(uid: string, id: string): Promise<Movimiento | null>;
   crear(uid: string, entrada: MovimientoEntrada): Promise<Movimiento>;
   actualizar(uid: string, id: string, entrada: MovimientoEntrada): Promise<Movimiento>;
+  guardarComprobanteUrl(uid: string, id: string, url: string | null): Promise<Movimiento>;
   eliminar(uid: string, id: string): Promise<void>;
   contarPorCategoria(uid: string, categoriaId: string): Promise<number>;
 }

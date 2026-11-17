@@ -146,6 +146,32 @@ export async function eliminarMovimiento(id: string): Promise<void> {
   if (!respuesta.ok) throw await leerError(respuesta);
 }
 
+export function registrarComprobante(
+  movimientoId: string,
+  cuerpo: { pathname: string },
+): Promise<Movimiento> {
+  return pedirJson(
+    `/api/movimientos/${encodeURIComponent(movimientoId)}/comprobante`,
+    movimientoSchema,
+    {
+      method: 'POST',
+      body: JSON.stringify(cuerpo),
+    },
+  );
+}
+
+export function eliminarComprobante(movimientoId: string): Promise<Movimiento> {
+  return pedirJson(
+    `/api/movimientos/${encodeURIComponent(movimientoId)}/comprobante`,
+    movimientoSchema,
+    { method: 'DELETE' },
+  );
+}
+
+export function urlComprobante(movimientoId: string): string {
+  return `/api/movimientos/${encodeURIComponent(movimientoId)}/comprobante`;
+}
+
 export function obtenerPresupuesto(mes: string, señal?: AbortSignal): Promise<Presupuesto> {
   return pedirJson(`/api/presupuestos/${encodeURIComponent(mes)}`, presupuestoSchema, {
     signal: señal,

@@ -12,6 +12,7 @@ const esquemaEntorno = z
     FIREBASE_PROJECT_ID: z.string().min(1).optional(),
     FIREBASE_CLIENT_EMAIL: z.email().optional(),
     FIREBASE_PRIVATE_KEY: z.string().min(1).optional(),
+    BLOB_READ_WRITE_TOKEN: z.string().min(1).optional(),
   })
   .superRefine((datos, contexto) => {
     if (datos.NODE_ENV === 'test') return;
@@ -19,13 +20,17 @@ const esquemaEntorno = z
       'FIREBASE_PROJECT_ID',
       'FIREBASE_CLIENT_EMAIL',
       'FIREBASE_PRIVATE_KEY',
+      'BLOB_READ_WRITE_TOKEN',
     ] as const;
     for (const campo of obligatorias) {
       if (!datos[campo]) {
         contexto.addIssue({
           code: 'custom',
           path: [campo],
-          message: 'Obligatoria fuera de test (Admin SDK)',
+          message:
+            campo === 'BLOB_READ_WRITE_TOKEN'
+              ? 'Obligatoria fuera de test (Vercel Blob)'
+              : 'Obligatoria fuera de test (Admin SDK)',
         });
       }
     }

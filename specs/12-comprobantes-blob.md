@@ -1,6 +1,6 @@
 # 12 · Comprobantes con Vercel Blob
 
-**Estado:** Pendiente · **Hito:** 4 · **Enunciado:** §9.5, §9.6
+**Estado:** Hecho · **Hito:** 4 · **Enunciado:** §9.5, §9.6
 
 ## Objetivo
 
@@ -22,9 +22,9 @@ su dueño a través de la API.
 
 ## Tareas
 
-- [ ] Puerto, adaptador y rutas + pruebas (401, pathname ajeno → 403, tipo no permitido → 415).
-- [ ] Componente de subida con progreso accesible.
-- [ ] Revisión de cuotas del plan Hobby y limpieza de archivos de prueba.
+- [x] Puerto, adaptador y rutas + pruebas (401, pathname ajeno → 403, tipo no permitido → 415).
+- [x] Componente de subida con progreso accesible.
+- [x] Revisión de cuotas del plan Hobby y limpieza de archivos de prueba.
 
 ## Dependencias por aprobar
 

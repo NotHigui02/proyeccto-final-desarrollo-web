@@ -86,10 +86,27 @@ export class RepositorioMovimientosMemoria implements RepositorioMovimientos {
   actualizar(uid: string, id: string, entrada: MovimientoEntrada): Promise<Movimiento> {
     const lista = this.listaDe(uid);
     const indice = lista.findIndex((movimiento) => movimiento.id === id);
-    if (indice < 0) {
+    const previo = lista[indice];
+    if (indice < 0 || !previo) {
       return Promise.reject(new ErrorNoEncontrado('Movimiento no encontrado'));
     }
-    const actualizado: Movimiento = { id, ...entrada };
+    const actualizado: Movimiento = {
+      id,
+      ...entrada,
+      comprobanteUrl: previo.comprobanteUrl,
+    };
+    lista[indice] = actualizado;
+    return Promise.resolve(actualizado);
+  }
+
+  guardarComprobanteUrl(uid: string, id: string, url: string | null): Promise<Movimiento> {
+    const lista = this.listaDe(uid);
+    const indice = lista.findIndex((movimiento) => movimiento.id === id);
+    const previo = lista[indice];
+    if (indice < 0 || !previo) {
+      return Promise.reject(new ErrorNoEncontrado('Movimiento no encontrado'));
+    }
+    const actualizado: Movimiento = { ...previo, comprobanteUrl: url };
     lista[indice] = actualizado;
     return Promise.resolve(actualizado);
   }
