@@ -27,3 +27,5 @@ firebase-debug.log
 *.log
 npm-debug.log*
 .idea/
+
+.cache/
