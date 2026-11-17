@@ -26,7 +26,7 @@
     "test:ia": "node --test \"ia/pruebas/*.test.mjs\"",
     "check": "npm run build:shared && npm run format:check && npm run lint && npm run typecheck && npm run test && npm run test:ia",
     "audit:prod": "npm audit --audit-level=high --omit=dev",
-    "prepare": "husky"
+    "prepare": "node -e \"if(process.env.VERCEL||process.env.CI)process.exit(0)\" && husky"
   },
   "lint-staged": {
     "*.{ts,tsx,js,mjs}": [
