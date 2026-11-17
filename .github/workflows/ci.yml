@@ -15,5 +15,6 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # build:shared va primero dentro de `check` (lint type-aware necesita dist/ de @gastos/shared)
       - run: npm run check
       - run: npm audit --audit-level=high
