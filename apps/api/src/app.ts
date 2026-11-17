@@ -1,15 +1,18 @@
 import { randomUUID } from 'node:crypto';
 import Fastify, { type FastifyInstance } from 'fastify';
+import type { LimitadorFrecuencia } from './application/ports/limitador-frecuencia.js';
 import type { ObtenerEstadoSalud } from './application/use-cases/obtener-estado-salud.js';
 import type { ObtenerResumenMes } from './application/use-cases/obtener-resumen-mes.js';
 import type { Entorno } from './infrastructure/config/entorno.js';
 import { registrarManejoErrores } from './infrastructure/http/manejo-errores.js';
 import { rutasResumen } from './infrastructure/http/routes/resumen.rutas.js';
 import { rutasSalud } from './infrastructure/http/routes/salud.rutas.js';
+import { registrarSeguridad } from './infrastructure/http/seguridad.js';
 
 export interface Dependencias {
   obtenerEstadoSalud: ObtenerEstadoSalud;
   obtenerResumenMes: ObtenerResumenMes;
+  limitadorFrecuencia: LimitadorFrecuencia;
 }
 
 export function construirApp(entorno: Entorno, dependencias: Dependencias): FastifyInstance {
@@ -39,6 +42,7 @@ export function construirApp(entorno: Entorno, dependencias: Dependencias): Fast
     listo();
   });
 
+  registrarSeguridad(app, entorno, dependencias.limitadorFrecuencia);
   registrarManejoErrores(app);
 
   void app.register(rutasSalud, {

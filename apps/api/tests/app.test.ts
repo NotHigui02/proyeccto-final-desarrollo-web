@@ -1,30 +1,45 @@
 import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
-import { construirApp } from '../src/app.js';
+import { construirApp, type Dependencias } from '../src/app.js';
+import type { LimitadorFrecuencia } from '../src/application/ports/limitador-frecuencia.js';
 import type { Reloj } from '../src/application/ports/reloj.js';
 import { ObtenerEstadoSalud } from '../src/application/use-cases/obtener-estado-salud.js';
 import { ObtenerResumenMes } from '../src/application/use-cases/obtener-resumen-mes.js';
 import { ErrorConflicto } from '../src/domain/errors/errores-dominio.js';
 import { cargarEntorno } from '../src/infrastructure/config/entorno.js';
 import { RepositorioDatosEjemplo } from '../src/infrastructure/memoria/datos-ejemplo.js';
+import { LimitadorMemoria } from '../src/infrastructure/memoria/limitador-memoria.js';
+import { validar } from '../src/infrastructure/http/validar.js';
 
 const relojFijo: Reloj = { ahora: () => new Date('2026-11-17T15:00:00.000Z') };
+const WEB_ORIGIN = 'http://localhost:5173';
 
-function crearApp() {
-  return construirApp(cargarEntorno({ NODE_ENV: 'test' }), {
+function crearDependencias(limitador?: LimitadorFrecuencia): Dependencias {
+  return {
     obtenerEstadoSalud: new ObtenerEstadoSalud(relojFijo),
     obtenerResumenMes: new ObtenerResumenMes(new RepositorioDatosEjemplo()),
-  });
+    limitadorFrecuencia: limitador ?? new LimitadorMemoria(1000, 60_000),
+  };
+}
+
+function crearApp(limitador?: LimitadorFrecuencia) {
+  return construirApp(
+    cargarEntorno({ NODE_ENV: 'test', WEB_ORIGIN }),
+    crearDependencias(limitador),
+  );
 }
 
 describe('GET /api/salud', () => {
-  it('responde 200 con el estado, sin caché y con id de petición', async () => {
+  it('responde 200 con el estado, sin caché, id y cabeceras de seguridad', async () => {
     const respuesta = await crearApp().inject({ method: 'GET', url: '/api/salud' });
 
     expect(respuesta.statusCode).toBe(200);
     expect(respuesta.json<unknown>()).toEqual({ estado: 'ok', fecha: '2026-11-17T15:00:00.000Z' });
     expect(respuesta.headers['cache-control']).toBe('no-store');
     expect(respuesta.headers['x-request-id']).toEqual(expect.any(String));
+    expect(respuesta.headers['x-content-type-options']).toBe('nosniff');
+    expect(respuesta.headers['referrer-policy']).toBe('no-referrer');
+    expect(respuesta.headers['content-security-policy']).toContain("default-src 'none'");
   });
 });
 
@@ -52,10 +67,114 @@ describe('GET /api/resumen', () => {
   it('responde 400 si el mes es inválido', async () => {
     const respuesta = await crearApp().inject({ method: 'GET', url: '/api/resumen?mes=2026-13' });
     expect(respuesta.statusCode).toBe(400);
-    expect(respuesta.json<unknown>()).toEqual({
-      error: 'Mes inválido',
-      detalles: [{ campo: 'mes', mensaje: 'El mes debe tener el formato AAAA-MM' }],
+    const cuerpo = respuesta.json<{ error: string; detalles: { campo: string }[] }>();
+    expect(cuerpo.error).toBe('Datos inválidos');
+    expect(cuerpo.detalles.map((detalle) => detalle.campo)).toEqual(['mes']);
+  });
+});
+
+describe('seguridad HTTP', () => {
+  it('rechaza Origen distinto en mutaciones (403)', async () => {
+    const app = crearApp();
+    app.post('/api/prueba', () => ({ ok: true }));
+
+    const respuesta = await app.inject({
+      method: 'POST',
+      url: '/api/prueba',
+      headers: {
+        origin: 'https://evil.example',
+        'content-type': 'application/json',
+      },
+      payload: {},
     });
+
+    expect(respuesta.statusCode).toBe(403);
+    expect(respuesta.json<unknown>()).toEqual({ error: 'Origen no permitido' });
+  });
+
+  it('rechaza Content-Type no JSON en mutaciones (415)', async () => {
+    const app = crearApp();
+    app.post('/api/prueba', () => ({ ok: true }));
+
+    const respuesta = await app.inject({
+      method: 'POST',
+      url: '/api/prueba',
+      headers: {
+        origin: WEB_ORIGIN,
+        'content-type': 'text/plain',
+      },
+      payload: 'hola',
+    });
+
+    expect(respuesta.statusCode).toBe(415);
+    expect(respuesta.json<unknown>()).toEqual({
+      error: 'Content-Type no permitido; use application/json',
+    });
+  });
+
+  it('rechaza cuerpos demasiado grandes (413)', async () => {
+    const app = crearApp();
+    app.post('/api/prueba', () => ({ ok: true }));
+    const cuerpo = 'x'.repeat(1_048_576 + 1);
+
+    const respuesta = await app.inject({
+      method: 'POST',
+      url: '/api/prueba',
+      headers: {
+        origin: WEB_ORIGIN,
+        'content-type': 'application/json',
+      },
+      payload: `"${cuerpo}"`,
+    });
+
+    expect(respuesta.statusCode).toBe(413);
+    expect(respuesta.json<unknown>()).toEqual({
+      error: 'El cuerpo de la petición es demasiado grande',
+    });
+  });
+
+  it('limita la frecuencia de escrituras (429)', async () => {
+    const limitador = new LimitadorMemoria(1, 60_000);
+    const app = crearApp(limitador);
+    app.post('/api/prueba', () => ({ ok: true }));
+
+    const cabeceras = { origin: WEB_ORIGIN, 'content-type': 'application/json' };
+    const primera = await app.inject({
+      method: 'POST',
+      url: '/api/prueba',
+      headers: cabeceras,
+      payload: {},
+    });
+    const segunda = await app.inject({
+      method: 'POST',
+      url: '/api/prueba',
+      headers: cabeceras,
+      payload: {},
+    });
+
+    expect(primera.statusCode).toBe(200);
+    expect(segunda.statusCode).toBe(429);
+    expect(segunda.json<unknown>()).toEqual({ error: 'Demasiadas solicitudes' });
+    expect(segunda.headers['retry-after']).toBeDefined();
+  });
+
+  it('permite el origen de la web en CORS', async () => {
+    const respuesta = await crearApp().inject({
+      method: 'GET',
+      url: '/api/salud',
+      headers: { origin: WEB_ORIGIN },
+    });
+
+    expect(respuesta.headers['access-control-allow-origin']).toBe(WEB_ORIGIN);
+    expect(respuesta.headers['access-control-allow-credentials']).toBe('true');
+  });
+});
+
+describe('validar', () => {
+  it('devuelve el valor tipado o lanza ZodError', () => {
+    const esquema = z.strictObject({ monto: z.number().int().positive() });
+    expect(validar(esquema, { monto: 10 })).toEqual({ monto: 10 });
+    expect(() => validar(esquema, { monto: 0 })).toThrow();
   });
 });
 
@@ -74,6 +193,7 @@ describe('manejo de errores', () => {
     const respuesta = await app.inject({
       method: 'POST',
       url: '/api/prueba',
+      headers: { origin: WEB_ORIGIN, 'content-type': 'application/json' },
       payload: { monto: 'x' },
     });
 

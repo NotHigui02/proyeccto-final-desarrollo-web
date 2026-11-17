@@ -57,7 +57,13 @@ export function registrarManejoErrores(app: FastifyInstance): void {
     }
 
     if (esErrorHttpCliente(error)) {
-      const cuerpo: CuerpoError = { error: error.message };
+      const mensaje =
+        error.statusCode === 413
+          ? 'El cuerpo de la petición es demasiado grande'
+          : error.statusCode === 415
+            ? 'Content-Type no permitido; use application/json'
+            : error.message;
+      const cuerpo: CuerpoError = { error: mensaje };
       return reply.status(error.statusCode).send(cuerpo);
     }
 

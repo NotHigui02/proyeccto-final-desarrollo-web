@@ -1,12 +1,4 @@
-import {
-  calcularResumen,
-  mesAnterior,
-  mesDeFecha,
-  mesSchema,
-  type Mes,
-  type Resumen,
-} from '@gastos/shared';
-import { ErrorValidacion } from '../../domain/errors/errores-dominio.js';
+import { calcularResumen, mesAnterior, mesDeFecha, type Mes, type Resumen } from '@gastos/shared';
 import type { RepositorioDatos } from '../ports/repositorio-datos.js';
 
 const MESES_EVOLUCION = 6;
@@ -14,15 +6,7 @@ const MESES_EVOLUCION = 6;
 export class ObtenerResumenMes {
   constructor(private readonly datos: RepositorioDatos) {}
 
-  async ejecutar(mesCrudo: string | undefined): Promise<Resumen> {
-    const parseado = mesSchema.safeParse(mesCrudo);
-    if (!parseado.success) {
-      throw new ErrorValidacion('Mes inválido', [
-        { campo: 'mes', mensaje: 'El mes debe tener el formato AAAA-MM' },
-      ]);
-    }
-
-    const mes = parseado.data;
+  async ejecutar(mes: Mes): Promise<Resumen> {
     const [categorias, movimientos] = await Promise.all([
       this.datos.listarCategorias(),
       this.datos.listarMovimientos(),

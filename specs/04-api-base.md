@@ -1,6 +1,6 @@
 # 04 · Base de la API REST
 
-**Estado:** Pendiente · **Hito:** 3 · **Enunciado:** §9.2, §9.6
+**Estado:** Hecho · **Hito:** 3 · **Enunciado:** §9.2, §9.6
 
 ## Objetivo
 
@@ -19,11 +19,11 @@ Completar la infraestructura HTTP común antes de los recursos: validación, seg
 
 ## Tareas
 
-- [ ] `validar()` y tipado de `request.body/query` desde esquemas de `@gastos/shared`.
-- [ ] Hook de tipo de contenido (415) y prueba de 413.
-- [ ] Cabeceras de seguridad + prueba.
-- [ ] Comprobación de `Origin` (403) + prueba.
-- [ ] Limitador de frecuencia (429) + prueba.
+- [x] `validar()` y tipado de `request.body/query` desde esquemas de `@gastos/shared`.
+- [x] Hook de tipo de contenido (415) y prueba de 413.
+- [x] Cabeceras de seguridad + prueba.
+- [x] Comprobación de `Origin` (403) + prueba.
+- [x] Limitador de frecuencia (429) + prueba.
 
 ## Pruebas
 
