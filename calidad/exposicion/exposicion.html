@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Gastos con gráficos · Exposición proyecto final</title>
+    <style>
+      @page {
+        size: A4 landscape;
+        margin: 14mm;
+      }
+      :root {
+        --ink: #14231f;
+        --muted: #3d524c;
+        --accent: #0b5d4b;
+        --line: #d5e0dc;
+        --bg: #f7faf8;
+        --card: #ffffff;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        color: var(--ink);
+        background: white;
+        font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        font-size: 13.5pt;
+        line-height: 1.35;
+      }
+      .slide {
+        page-break-after: always;
+        break-after: page;
+        min-height: calc(100vh - 28mm);
+        padding: 8mm 10mm;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        margin-bottom: 8mm;
+        background: linear-gradient(160deg, #f7faf8 0%, #ffffff 42%, #eef6f2 100%);
+        position: relative;
+        overflow: hidden;
+      }
+      .slide:last-child {
+        page-break-after: auto;
+      }
+      .slide::before {
+        content: '';
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 10px;
+        background: var(--accent);
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 34pt;
+        line-height: 1.1;
+        color: var(--accent);
+      }
+      h2 {
+        margin: 0 0 14px;
+        font-size: 24pt;
+        color: var(--accent);
+      }
+      h3 {
+        margin: 12px 0 6px;
+        font-size: 15pt;
+        color: var(--ink);
+      }
+      p,
+      li {
+        color: var(--muted);
+      }
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 10pt;
+        color: var(--accent);
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .subtitle {
+        font-size: 16pt;
+        color: var(--muted);
+        max-width: 42rem;
+      }
+      .meta {
+        margin-top: 28px;
+        font-size: 12pt;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 12px 14px;
+      }
+      .card strong {
+        display: block;
+        color: var(--ink);
+        margin-bottom: 4px;
+      }
+      ul {
+        margin: 8px 0 0;
+        padding-left: 1.2em;
+      }
+      li {
+        margin: 4px 0;
+      }
+      code,
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.92em;
+      }
+      pre {
+        background: #10241f;
+        color: #e8f5f0;
+        padding: 12px 14px;
+        border-radius: 8px;
+        font-size: 10.5pt;
+        line-height: 1.4;
+        overflow: hidden;
+        white-space: pre-wrap;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11.5pt;
+        background: white;
+      }
+      th,
+      td {
+        border: 1px solid var(--line);
+        padding: 7px 8px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: #e7f3ee;
+        color: var(--ink);
+      }
+      .footer {
+        position: absolute;
+        left: 18mm;
+        right: 10mm;
+        bottom: 6mm;
+        font-size: 9.5pt;
+        color: #6b7f78;
+        display: flex;
+        justify-content: space-between;
+      }
+      .pill {
+        display: inline-block;
+        background: #dceee7;
+        color: var(--accent);
+        border-radius: 999px;
+        padding: 2px 10px;
+        font-size: 10pt;
+        font-weight: 700;
+      }
+      .cover h1 {
+        font-size: 40pt;
+        max-width: 16ch;
+      }
+      .big-list li {
+        margin: 8px 0;
+        font-size: 14pt;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 1 -->
+    <section class="slide cover">
+      <div class="eyebrow">Proyecto final · Desarrollo Web · Proyecto 05</div>
+      <h1>Gastos con gráficos</h1>
+      <p class="subtitle">
+        Registro de ingresos y gastos con resumen mensual, presupuesto y gráficos SVG dibujados a mano —
+        API hexagonal + React, desplegado en Vercel.
+      </p>
+      <div class="meta">
+        <p><span class="pill">URL</span> https://proyecto-final-desarrollo-web-three.vercel.app</p>
+        <p><strong>Stack:</strong> Fastify · React 19 · Vite · Firebase · Vercel Blob · Zod</p>
+        <p><strong>Arquitectura:</strong> limpia/hexagonal (API) · por componentes (web)</p>
+      </div>
+      <div class="footer"><span>Exposición técnica</span><span>1</span></div>
+    </section>
+
+    <!-- 2 -->
+    <section class="slide">
+      <div class="eyebrow">Contexto</div>
+      <h2>Problema y objetivo</h2>
+      <div class="grid-2">
+        <div class="card">
+          <strong>Usuario</strong>
+          <p>
+            Estudiante que quiere ver en qué se le va el dinero: registrar movimientos, clasificarlos y
+            entender el mes con números y gráficos.
+          </p>
+        </div>
+        <div class="card">
+          <strong>Objetivo del producto</strong>
+          <ul>
+            <li>CRUD de categorías y movimientos</li>
+            <li>Resumen del mes + gráficos por categoría y por mes</li>
+            <li>Presupuesto con alerta al 80 %</li>
+            <li>Exportar CSV y adjuntar comprobantes</li>
+            <li>Auth real + despliegue con mismo origen</li>
+          </ul>
+        </div>
+      </div>
+      <h3>Cómo se trabajó</h3>
+      <ul class="big-list">
+        <li>Specs locales en <code>specs/</code> (01→14), sin flujos <code>/sdd*</code></li>
+        <li>Implementación incremental con pruebas y <code>npm run check</code></li>
+        <li>Bitácora de IA en <code>ia/bitacora.md</code> + hooks de seguridad</li>
+      </ul>
+      <div class="footer"><span>Gastos con gráficos</span><span>2</span></div>
+    </section>
+
+    <!-- 3 -->
+    <section class="slide">
+      <div class="eyebrow">Tecnologías</div>
+      <h2>Stack del monorepo</h2>
+      <div class="grid-3">
+        <div class="card">
+          <strong>apps/web</strong>
+          <ul>
+            <li>React 19 + Vite + React Router</li>
+            <li>CSS Modules, mobile-first</li>
+            <li>Firebase Auth (solo SDK web)</li>
+            <li>Vitest + Testing Library</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>apps/api</strong>
+          <ul>
+            <li>Fastify 5 + TypeScript estricto</li>
+            <li>Arquitectura hexagonal</li>
+            <li>Firebase Admin + Firestore</li>
+            <li>Vercel Blob (privado)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>packages/shared</strong>
+          <ul>
+            <li>Esquemas Zod (una sola vez)</li>
+            <li>Dinero en centavos</li>
+            <li>Fechas <code>YYYY-MM-DD</code></li>
+            <li>Utilidades puras + pruebas</li>
+          </ul>
+        </div>
+      </div>
+      <h3>Calidad automática</h3>
+      <p>
+        ESLint strict type-checked + jsx-a11y + reglas de capas · Prettier · Husky + lint-staged · Vitest ·
+        CI en GitHub Actions · Node 22 · npm workspaces
+      </p>
+      <div class="footer"><span>Gastos con gráficos</span><span>3</span></div>
+    </section>
+
+    <!-- 4 -->
+    <section class="slide">
+      <div class="eyebrow">Arquitectura</div>
+      <h2>Visión del sistema</h2>
+      <pre>
+[ Navegador ]  React 19 · Vite · React Router
+   │  Firebase Auth (cliente) → POST /api/auth/sesion → cookie HttpOnly
+   │  fetch /api (mismo origen: proxy Vite / rewrites Vercel)
+   ▼
+[ API REST ]  Fastify en Vercel (función /api)
+   │  ruta HTTP+Zod → caso de uso → puerto ← adaptador
+   ├──────▶ Firebase Auth + Firestore (solo Admin SDK)
+   └──────▶ Vercel Blob (comprobantes privados)
+      </pre>
+      <div class="grid-2" style="margin-top: 12px">
+        <div class="card">
+          <strong>Adaptación del enunciado</strong>
+          <p>
+            El enunciado asume Next.js. Aquí: <strong>Fastify</strong> en lugar de Route Handlers y
+            <strong>React + Vite</strong> en lugar de App Router (documentado en
+            <code>specs/00-vision-y-arquitectura.md</code>).
+          </p>
+        </div>
+        <div class="card">
+          <strong>Principio clave</strong>
+          <p>
+            Inversión de dependencias: los casos de uso no conocen Firebase ni Fastify. Los adaptadores se
+            cablean solo en <code>container.ts</code>.
+          </p>
+        </div>
+      </div>
+      <div class="footer"><span>Gastos con gráficos</span><span>4</span></div>
+    </section>
+
+    <!-- 5 -->
+    <section class="slide">
+      <div class="eyebrow">Arquitectura</div>
+      <h2>Capas de la API</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Capa</th>
+            <th>Contenido</th>
+            <th>Regla</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>domain/</code></td>
+            <td>Entidades, errores de dominio</td>
+            <td>Sin dependencias externas</td>
+          </tr>
+          <tr>
+            <td><code>application/ports</code></td>
+            <td>Interfaces (repos, auth, blob, reloj)</td>
+            <td>Contratos estables</td>
+          </tr>
+          <tr>
+            <td><code>application/use-cases</code></td>
+            <td>Un caso de uso por clase</td>
+            <td>Recibe puertos por constructor</td>
+          </tr>
+          <tr>
+            <td><code>infrastructure/</code></td>
+            <td>HTTP Fastify, Firebase, Blob, memoria</td>
+            <td>Implementa puertos</td>
+          </tr>
+          <tr>
+            <td><code>container.ts</code></td>
+            <td>Composición de dependencias</td>
+            <td>Único lugar que instancia adaptadores</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top: 12px">
+        En pruebas se inyectan adaptadores en memoria + <code>app.inject()</code>. En producción:
+        Firestore + Auth Firebase + Blob.
+      </p>
+      <div class="footer"><span>Gastos con gráficos</span><span>5</span></div>
+    </section>
+
+    <!-- 6 -->
+    <section class="slide">
+      <div class="eyebrow">Frontend</div>
+      <h2>Arquitectura por componentes</h2>
+      <div class="grid-2">
+        <div>
+          <pre>
+apps/web/src/
+├── app/          rutas, guardias, lazy
+├── pages/        una página por ruta
+├── components/   layout, ui, charts, forms
+├── context/      sesión, mes
+├── hooks/        debounce, resumen, tamaño
+├── services/     cliente HTTP / auth
+└── lib/          firebase web
+          </pre>
+        </div>
+        <div class="card">
+          <strong>Decisiones de UI</strong>
+          <ul>
+            <li>HTML semántico + WCAG 2.2 AA</li>
+            <li>Estados carga / vacío / error / reintento</li>
+            <li><code>React.lazy</code> + Suspense (presupuesto JS)</li>
+            <li>Gráficos SVG a mano (<code>role="img"</code> + tabla alternativa)</li>
+            <li><code>ResizeObserver</code>, <code>Intl</code> (COP / fechas)</li>
+            <li><code>prefers-color-scheme</code> y <code>prefers-contrast</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer"><span>Gastos con gráficos</span><span>6</span></div>
+    </section>
+
+    <!-- 7 -->
+    <section class="slide">
+      <div class="eyebrow">Dominio</div>
+      <h2>Reglas de negocio transversales</h2>
+      <div class="grid-2">
+        <div class="card">
+          <strong>Dinero</strong>
+          <ul>
+            <li>Siempre enteros de <strong>centavos</strong></li>
+            <li>Nunca <code>number</code> con decimales para montos</li>
+            <li>Formato COP solo al presentar (<code>Intl</code>)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Tiempo</strong>
+          <ul>
+            <li>Fechas de negocio: <code>YYYY-MM-DD</code></li>
+            <li>Marcas de tiempo: ISO 8601 UTC</li>
+            <li>Mes del resumen vía URL / selector</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Validación</strong>
+          <ul>
+            <li>Zod estricto (<code>z.strictObject</code>)</li>
+            <li>Misma fuente en shared para web y API</li>
+            <li>El servidor siempre decide</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Errores API</strong>
+          <ul>
+            <li>Formato <code>{ error, detalles? }</code></li>
+            <li>Clases de dominio</li>
+            <li>Nunca filtrar internos en un 500</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer"><span>Gastos con gráficos</span><span>7</span></div>
+    </section>
+
+    <!-- 8 -->
+    <section class="slide">
+      <div class="eyebrow">Funcionalidad</div>
+      <h2>Qué se implementó (por bloques)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Specs</th>
+            <th>Entrega</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>01–03</td>
+            <td>Monorepo, shared Zod, resumen + gráficos con datos de ejemplo</td>
+          </tr>
+          <tr>
+            <td>04–09</td>
+            <td>API base, categorías, movimientos, resumen real, presupuesto, CSV</td>
+          </tr>
+          <tr>
+            <td>10–12</td>
+            <td>Firestore Admin, autenticación cookie, comprobantes Blob</td>
+          </tr>
+          <tr>
+            <td>13–14</td>
+            <td>OpenAPI + Bruno, calidad, SEO, Vercel producción</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="grid-3" style="margin-top: 12px">
+        <div class="card"><strong>RF-01</strong> Categorías y movimientos</div>
+        <div class="card"><strong>RF-02/03</strong> Resumen y gráficos</div>
+        <div class="card"><strong>RF-04</strong> Presupuesto / alerta 80 %</div>
+        <div class="card"><strong>RF-05</strong> Selector de mes</div>
+        <div class="card"><strong>RF-06</strong> Exportar CSV</div>
+        <div class="card"><strong>Extra</strong> Comprobantes privados</div>
+      </div>
+      <div class="footer"><span>Gastos con gráficos</span><span>8</span></div>
+    </section>
+
+    <!-- 9 -->
+    <section class="slide">
+      <div class="eyebrow">Seguridad</div>
+      <h2>Modelo de seguridad</h2>
+      <div class="grid-2">
+        <div class="card">
+          <strong>Identidad y autorización</strong>
+          <ul>
+            <li><code>uid</code> solo desde sesión verificada</li>
+            <li>Nunca del body ni de la URL</li>
+            <li>Autorización por objeto en cada ruta privada</li>
+            <li>Guardia React ≠ seguridad real (la API decide)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Sesión y CSRF</strong>
+          <ul>
+            <li>Cookie <code>HttpOnly; Secure; SameSite=Lax</code></li>
+            <li>Comprobación de <code>Origin</code> = <code>WEB_ORIGIN</code> en mutaciones</li>
+            <li>Bearer opcional (Bruno / pruebas)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Datos y secretos</strong>
+          <ul>
+            <li>Firestore: <code>allow read, write: if false</code></li>
+            <li>Solo Admin SDK en servidor</li>
+            <li>Secretos fuera de Git; <code>VITE_*</code> solo config pública</li>
+            <li>Sin <code>dangerouslySetInnerHTML</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>API endurecida</strong>
+          <ul>
+            <li>Zod en entradas</li>
+            <li>415 / 413 / 429</li>
+            <li>Cabeceras de seguridad + CSP en estáticos</li>
+            <li>Blob: tipo/tamaño, pathname <code>usuarios/&lt;uid&gt;/</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer"><span>Gastos con gráficos</span><span>9</span></div>
+    </section>
+
+    <!-- 10 -->
+    <section class="slide">
+      <div class="eyebrow">Autenticación</div>
+      <h2>Flujo de inicio de sesión</h2>
+      <ol>
+        <li>El usuario inicia sesión con Firebase Auth en el navegador (email/contraseña).</li>
+        <li>El cliente obtiene un <code>idToken</code> y hace <code>POST /api/auth/sesion</code>.</li>
+        <li>La API verifica el token con Admin SDK y emite cookie de sesión HttpOnly.</li>
+        <li>Las peticiones siguientes usan la cookie; <code>GET /api/auth/yo</code> confirma identidad.</li>
+        <li><code>DELETE /api/auth/sesion</code> cierra sesión (y opcionalmente Firebase cliente).</li>
+      </ol>
+      <div class="card" style="margin-top: 12px">
+        <strong>Producción</strong>
+        <p>
+          Dominio autorizado en Firebase Auth + <code>WEB_ORIGIN</code> exacto en Vercel (sin comillas). El
+          error “origen no permitido” suele ser desajuste de <code>WEB_ORIGIN</code>, no del usuario de
+          prueba.
+        </p>
+      </div>
+      <div class="footer"><span>Gastos con gráficos</span><span>10</span></div>
+    </section>
+
+    <!-- 11 -->
+    <section class="slide">
+      <div class="eyebrow">Persistencia</div>
+      <h2>Firestore y Blob</h2>
+      <div class="grid-2">
+        <div class="card">
+          <strong>Firestore (Admin SDK)</strong>
+          <ul>
+            <li>Repositorios por agregado (categorías, movimientos, presupuestos)</li>
+            <li>Datos bajo el usuario autenticado</li>
+            <li>Índices y reglas denegadas al cliente</li>
+            <li>Adaptador memoria para tests</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Vercel Blob</strong>
+          <ul>
+            <li>Store privado</li>
+            <li>Subida autorizada por la API</li>
+            <li>Cliente notifica registro tras upload</li>
+            <li>GET/DELETE con ownership por <code>uid</code></li>
+          </ul>
+        </div>
+      </div>
+      <h3>Contrato HTTP</h3>
+      <p>
+        OpenAPI 3.1 (<code>openapi.yaml</code>) + colección Bruno (<code>bruno/</code>) con entornos local y
+        producción; prueba de sincronía en la API.
+      </p>
+      <div class="footer"><span>Gastos con gráficos</span><span>11</span></div>
+    </section>
+
+    <!-- 12 -->
+    <section class="slide">
+      <div class="eyebrow">IA y proceso</div>
+      <h2>Configuración de IA del proyecto</h2>
+      <div class="grid-2">
+        <div class="card">
+          <strong>Restricciones (hooks)</strong>
+          <ul>
+            <li>No leer/crear <code>.env*</code>, claves, PEM</li>
+            <li>No salir de la carpeta del proyecto</li>
+            <li>Push, install, red: piden permiso</li>
+            <li>failClosed en hooks de Cursor</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Trazabilidad</strong>
+          <ul>
+            <li><code>AGENTS.md</code> como fuente principal</li>
+            <li>Reglas en <code>.cursor/rules/</code></li>
+            <li>Bitácora <code>ia/bitacora.md</code></li>
+            <li>Pruebas <code>npm run test:ia</code> (61)</li>
+          </ul>
+        </div>
+      </div>
+      <p style="margin-top: 12px">
+        La IA ayudó a implementar specs, corregir CI/Vercel y documentar calidad; las decisiones de producto
+        y secretos las controló el estudiante.
+      </p>
+      <div class="footer"><span>Gastos con gráficos</span><span>12</span></div>
+    </section>
+
+    <!-- 13 -->
+    <section class="slide">
+      <div class="eyebrow">Despliegue</div>
+      <h2>Vercel · mismo origen</h2>
+      <div class="grid-2">
+        <div class="card">
+          <strong>Build</strong>
+          <ul>
+            <li><code>vercel.json</code>: build shared + API + web</li>
+            <li>Estáticos: <code>apps/web/dist</code></li>
+            <li><code>/api/*</code> → <code>api/index.mjs</code> (Fastify)</li>
+            <li>SPA fallback a <code>index.html</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Variables (panel Vercel)</strong>
+          <ul>
+            <li>Admin: <code>FIREBASE_*</code>, <code>BLOB_*</code></li>
+            <li><code>WEB_ORIGIN</code> canónico</li>
+            <li>Web: <code>VITE_FIREBASE_*</code></li>
+            <li>Sin comillas en el panel</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card" style="margin-top: 12px">
+        <strong>Incidencias resueltas en producción</strong>
+        <ul>
+          <li><code>prepare</code>/husky en install → se omite en Vercel/CI</li>
+          <li><code>ERR_REQUIRE_ESM</code> (jose 6 + jwks-rsa) → override a jose 4.15.9</li>
+          <li>Validación de env y dominio Auth / <code>WEB_ORIGIN</code></li>
+        </ul>
+      </div>
+      <div class="footer"><span>Gastos con gráficos</span><span>13</span></div>
+    </section>
+
+    <!-- 14 -->
+    <section class="slide">
+      <div class="eyebrow">Calidad</div>
+      <h2>Evidencias y métricas</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Ámbito</th>
+            <th>Resultado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Lighthouse `/login` móvil</td>
+            <td>97 · 100 · 93 · 91 (perf / a11y / BP / SEO)</td>
+          </tr>
+          <tr>
+            <td>Lighthouse `/login` escritorio</td>
+            <td>100 · 100 · 93 · 91</td>
+          </tr>
+          <tr>
+            <td>LCP / CLS (lab)</td>
+            <td>2,0 s / 0 (móvil) · 0,5 s / 0 (escritorio)</td>
+          </tr>
+          <tr>
+            <td>JS transferido</td>
+            <td>≈ 164 KiB (≤ 200 KiB)</td>
+          </tr>
+          <tr>
+            <td>Pruebas</td>
+            <td>Shared + API (<code>inject</code>) + web RTL + tests de IA</td>
+          </tr>
+          <tr>
+            <td>Retos excelencia</td>
+            <td>Modo oscuro/contraste · navegación anunciada · code splitting</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top: 10px">
+        Detalle en <code>calidad/CALIDAD.md</code>. Pendiente de cierre: capturas responsive y pasada manual
+        axe / HTML / teclado / lector.
+      </p>
+      <div class="footer"><span>Gastos con gráficos</span><span>14</span></div>
+    </section>
+
+    <!-- 15 -->
+    <section class="slide">
+      <div class="eyebrow">Cierre</div>
+      <h2>Demo sugerida (3–5 min)</h2>
+      <ol class="big-list">
+        <li>Abrir producción → login con usuario de prueba</li>
+        <li>Crear categoría y movimiento → ver resumen y gráficos</li>
+        <li>Presupuesto y alerta · exportar CSV</li>
+        <li>Subir comprobante (si hay token Blob)</li>
+        <li>Mostrar OpenAPI/Bruno o una prueba de API 401/400</li>
+        <li>(Opcional) Hooks de IA: intento de leer <code>.env</code> bloqueado</li>
+      </ol>
+      <div class="card" style="margin-top: 16px">
+        <strong>Mensaje final</strong>
+        <p>
+          Se entregó un sistema completo de gastos con arquitectura limpia, seguridad por defecto, gráficos
+          sin librerías y despliegue real en Vercel — construido por specs verificables y con evidencia de
+          calidad e IA.
+        </p>
+      </div>
+      <div class="footer"><span>Gastos con gráficos</span><span>15</span></div>
+    </section>
+  </body>
+</html>
