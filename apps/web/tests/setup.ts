@@ -42,6 +42,16 @@ beforeEach(() => {
           ),
         );
       }
+      if (url.includes('/api/categorias')) {
+        return Promise.resolve(
+          new Response(
+            JSON.stringify({
+              items: [{ id: 'comida', nombre: 'Comida', color: '#E11D48' }],
+            }),
+            { status: 200, headers: { 'Content-Type': 'application/json' } },
+          ),
+        );
+      }
       return Promise.resolve(
         new Response(JSON.stringify({ error: 'No encontrado' }), { status: 404 }),
       );

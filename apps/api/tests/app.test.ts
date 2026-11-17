@@ -1,37 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
-import { construirApp, type Dependencias } from '../src/app.js';
-import type { LimitadorFrecuencia } from '../src/application/ports/limitador-frecuencia.js';
-import type { Reloj } from '../src/application/ports/reloj.js';
-import { ObtenerEstadoSalud } from '../src/application/use-cases/obtener-estado-salud.js';
-import { ObtenerResumenMes } from '../src/application/use-cases/obtener-resumen-mes.js';
 import { ErrorConflicto } from '../src/domain/errors/errores-dominio.js';
-import { cargarEntorno } from '../src/infrastructure/config/entorno.js';
-import { RepositorioDatosEjemplo } from '../src/infrastructure/memoria/datos-ejemplo.js';
 import { LimitadorMemoria } from '../src/infrastructure/memoria/limitador-memoria.js';
 import { validar } from '../src/infrastructure/http/validar.js';
-
-const relojFijo: Reloj = { ahora: () => new Date('2026-11-17T15:00:00.000Z') };
-const WEB_ORIGIN = 'http://localhost:5173';
-
-function crearDependencias(limitador?: LimitadorFrecuencia): Dependencias {
-  return {
-    obtenerEstadoSalud: new ObtenerEstadoSalud(relojFijo),
-    obtenerResumenMes: new ObtenerResumenMes(new RepositorioDatosEjemplo()),
-    limitadorFrecuencia: limitador ?? new LimitadorMemoria(1000, 60_000),
-  };
-}
-
-function crearApp(limitador?: LimitadorFrecuencia) {
-  return construirApp(
-    cargarEntorno({ NODE_ENV: 'test', WEB_ORIGIN }),
-    crearDependencias(limitador),
-  );
-}
+import { crearAppPrueba, WEB_ORIGIN } from './helpers.js';
 
 describe('GET /api/salud', () => {
   it('responde 200 con el estado, sin caché, id y cabeceras de seguridad', async () => {
-    const respuesta = await crearApp().inject({ method: 'GET', url: '/api/salud' });
+    const respuesta = await crearAppPrueba().inject({ method: 'GET', url: '/api/salud' });
 
     expect(respuesta.statusCode).toBe(200);
     expect(respuesta.json<unknown>()).toEqual({ estado: 'ok', fecha: '2026-11-17T15:00:00.000Z' });
@@ -45,7 +21,10 @@ describe('GET /api/salud', () => {
 
 describe('GET /api/resumen', () => {
   it('responde 200 con totales del mes y evolución', async () => {
-    const respuesta = await crearApp().inject({ method: 'GET', url: '/api/resumen?mes=2026-11' });
+    const respuesta = await crearAppPrueba().inject({
+      method: 'GET',
+      url: '/api/resumen?mes=2026-11',
+    });
     const cuerpo = respuesta.json<{
       mes: string;
       ingresosCentavos: number;
@@ -65,7 +44,10 @@ describe('GET /api/resumen', () => {
   });
 
   it('responde 400 si el mes es inválido', async () => {
-    const respuesta = await crearApp().inject({ method: 'GET', url: '/api/resumen?mes=2026-13' });
+    const respuesta = await crearAppPrueba().inject({
+      method: 'GET',
+      url: '/api/resumen?mes=2026-13',
+    });
     expect(respuesta.statusCode).toBe(400);
     const cuerpo = respuesta.json<{ error: string; detalles: { campo: string }[] }>();
     expect(cuerpo.error).toBe('Datos inválidos');
@@ -75,7 +57,7 @@ describe('GET /api/resumen', () => {
 
 describe('seguridad HTTP', () => {
   it('rechaza Origen distinto en mutaciones (403)', async () => {
-    const app = crearApp();
+    const app = crearAppPrueba();
     app.post('/api/prueba', () => ({ ok: true }));
 
     const respuesta = await app.inject({
@@ -93,7 +75,7 @@ describe('seguridad HTTP', () => {
   });
 
   it('rechaza Content-Type no JSON en mutaciones (415)', async () => {
-    const app = crearApp();
+    const app = crearAppPrueba();
     app.post('/api/prueba', () => ({ ok: true }));
 
     const respuesta = await app.inject({
@@ -113,7 +95,7 @@ describe('seguridad HTTP', () => {
   });
 
   it('rechaza cuerpos demasiado grandes (413)', async () => {
-    const app = crearApp();
+    const app = crearAppPrueba();
     app.post('/api/prueba', () => ({ ok: true }));
     const cuerpo = 'x'.repeat(1_048_576 + 1);
 
@@ -135,7 +117,7 @@ describe('seguridad HTTP', () => {
 
   it('limita la frecuencia de escrituras (429)', async () => {
     const limitador = new LimitadorMemoria(1, 60_000);
-    const app = crearApp(limitador);
+    const app = crearAppPrueba(limitador);
     app.post('/api/prueba', () => ({ ok: true }));
 
     const cabeceras = { origin: WEB_ORIGIN, 'content-type': 'application/json' };
@@ -159,7 +141,7 @@ describe('seguridad HTTP', () => {
   });
 
   it('permite el origen de la web en CORS', async () => {
-    const respuesta = await crearApp().inject({
+    const respuesta = await crearAppPrueba().inject({
       method: 'GET',
       url: '/api/salud',
       headers: { origin: WEB_ORIGIN },
@@ -180,14 +162,14 @@ describe('validar', () => {
 
 describe('manejo de errores', () => {
   it('responde 404 con el formato común', async () => {
-    const respuesta = await crearApp().inject({ method: 'GET', url: '/api/no-existe' });
+    const respuesta = await crearAppPrueba().inject({ method: 'GET', url: '/api/no-existe' });
 
     expect(respuesta.statusCode).toBe(404);
     expect(respuesta.json<unknown>()).toEqual({ error: 'Recurso no encontrado' });
   });
 
   it('convierte un error de Zod en 400 con detalle por campo', async () => {
-    const app = crearApp();
+    const app = crearAppPrueba();
     app.post('/api/prueba', (request) => z.strictObject({ monto: z.number() }).parse(request.body));
 
     const respuesta = await app.inject({
@@ -204,7 +186,7 @@ describe('manejo de errores', () => {
   });
 
   it('convierte un error de dominio en su código HTTP', async () => {
-    const app = crearApp();
+    const app = crearAppPrueba();
     app.get('/api/prueba', () => {
       throw new ErrorConflicto('La categoría ya existe');
     });
@@ -216,7 +198,7 @@ describe('manejo de errores', () => {
   });
 
   it('oculta los detalles de un error inesperado', async () => {
-    const app = crearApp();
+    const app = crearAppPrueba();
     app.get('/api/prueba', () => {
       throw new Error('detalle interno sensible');
     });

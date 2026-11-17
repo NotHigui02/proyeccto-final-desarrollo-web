@@ -1,6 +1,6 @@
 # 05 · Categorías
 
-**Estado:** Pendiente · **Hito:** 2–3 · **Enunciado:** RF-01, §8, §9.4
+**Estado:** Hecho · **Hito:** 2–3 · **Enunciado:** RF-01, §8, §9.4
 
 ## Objetivo
 
@@ -31,9 +31,9 @@ movimientos».
 
 ## Tareas
 
-- [ ] Casos de uso + pruebas con repositorios en memoria (incluida la regla de borrado).
-- [ ] Rutas + pruebas `app.inject` (201, 400, 404, 409).
-- [ ] Página y componentes + pruebas RTL (al menos formulario y error de validación).
+- [x] Casos de uso + pruebas con repositorios en memoria (incluida la regla de borrado).
+- [x] Rutas + pruebas `app.inject` (201, 400, 404, 409).
+- [x] Página y componentes + pruebas RTL (al menos formulario y error de validación).
 
 ## Definición de terminado
 
